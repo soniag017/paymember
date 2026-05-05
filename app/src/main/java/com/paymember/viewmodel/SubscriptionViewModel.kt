@@ -57,11 +57,12 @@ class SubscriptionViewModel(
         }
     }
 
-    fun saveSubscription(onDone: () -> Unit) {
+    fun saveSubscription(onDone: (SubscriptionEntity) -> Unit) {
         val current = _formState.value
-        val price = current.price.toDoubleOrNull() ?: return
+        val normalizedPrice = current.price.replace(',', '.')
+        val price = normalizedPrice.toDoubleOrNull() ?: return
         val billingDay = current.billingDay.toIntOrNull() ?: return
-        if (current.serviceName.isBlank() || billingDay !in 1..31) return
+        if (current.serviceName.isBlank() || billingDay !in 1..31 || price <= 0.0) return
 
         val entity = SubscriptionEntity(
             id = current.id,
@@ -74,24 +75,35 @@ class SubscriptionViewModel(
         )
 
         viewModelScope.launch {
-            if (entity.id == 0) {
-                repository.addSubscription(entity)
+            val savedEntity = if (entity.id == 0) {
+                val generatedId = repository.addSubscription(entity).toInt()
+                entity.copy(id = generatedId)
             } else {
                 repository.updateSubscription(entity)
+                entity
             }
             clearForm()
-            onDone()
+            onDone(savedEntity)
         }
     }
 
-    fun deleteSubscription(subscription: SubscriptionEntity) {
+    fun deleteSubscription(subscription: SubscriptionEntity, onDone: (Int) -> Unit) {
         viewModelScope.launch {
             repository.deleteSubscription(subscription)
+            onDone(subscription.id)
         }
     }
 
     fun clearForm() {
         _formState.value = SubscriptionFormState()
+    }
+
+    fun isFormValid(): Boolean {
+        val current = _formState.value
+        val normalizedPrice = current.price.replace(',', '.')
+        val price = normalizedPrice.toDoubleOrNull() ?: return false
+        val billingDay = current.billingDay.toIntOrNull() ?: return false
+        return current.serviceName.isNotBlank() && billingDay in 1..31 && price > 0.0
     }
 }
 

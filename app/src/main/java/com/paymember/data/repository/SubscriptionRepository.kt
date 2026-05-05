@@ -9,7 +9,7 @@ class SubscriptionRepository(private val dao: SubscriptionDao) {
 
     suspend fun getSubscriptionById(id: Int): SubscriptionEntity? = dao.getById(id)
 
-    suspend fun addSubscription(subscription: SubscriptionEntity) = dao.insert(subscription)
+    suspend fun addSubscription(subscription: SubscriptionEntity): Long = dao.insert(subscription)
 
     suspend fun updateSubscription(subscription: SubscriptionEntity) = dao.update(subscription)
 
