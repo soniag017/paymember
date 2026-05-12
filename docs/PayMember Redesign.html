@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>PayMember · Rediseño visual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin:0; padding:0; background:#1a1a1a; font-family:'Geist', system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { color:#0F1010; }
+
+  /* Theme variables — light is default, dark is opt-in via [data-theme=dark] */
+  :root, [data-theme="light"] {
+    --c-bg:        #EFEDE6;
+    --c-surface:   #FFFFFF;
+    --c-surface2:  #FAF7EE;
+    --c-surface3:  #F5F1E4;
+    --c-ink:       #0F1010;
+    --c-ink2:      #3A3B3D;
+    --c-muted:     #8A8A85;
+    --c-hairline:  #E5E1D2;
+    --c-hairline2: #EDEAE0;
+    --c-brand:     #1F4634;
+    --c-brandSoft: #E6EDDD;
+    --c-brandInk:  #0E2A1F;
+    --c-onBrand:   #FFFFFF;
+    --c-coral:     #E8916B;
+    --c-lavender:  #B5AEE6;
+    --c-sky:       #A6C6E8;
+    --c-rose:      #E4B5C5;
+    --c-butter:    #E8D08C;
+    --c-moss:      #9CB87A;
+    --c-success:   #2F7E5C;
+    --c-danger:    #C24B4B;
+    --shadow-card: 0 1px 0 rgba(15,16,16,0.04), 0 1px 2px rgba(15,16,16,0.06);
+  }
+  [data-theme="dark"] {
+    --c-bg:        #14130F;
+    --c-surface:   #1E1C17;
+    --c-surface2:  #25221C;
+    --c-surface3:  #2C281F;
+    --c-ink:       #F1EDDE;
+    --c-ink2:      #BFB9A8;
+    --c-muted:     #7E796C;
+    --c-hairline:  #2F2B22;
+    --c-hairline2: #3A3527;
+    --c-brand:     #9CD8B5;
+    --c-brandSoft: #22332A;
+    --c-brandInk:  #DEF1E4;
+    --c-onBrand:   #0B1A12;
+    --c-coral:     #E8916B;
+    --c-lavender:  #B5AEE6;
+    --c-sky:       #A6C6E8;
+    --c-rose:      #E4B5C5;
+    --c-butter:    #E8D08C;
+    --c-moss:      #9CB87A;
+    --c-success:   #4FB089;
+    --c-danger:    #E27A7A;
+    --shadow-card: 0 1px 0 rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.5);
+  }
+</style>
+
+<!-- React + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- Tokens -->
+<script src="tokens.js"></script>
+
+<!-- Components -->
+<script type="text/babel" src="primitives.jsx"></script>
+<script type="text/babel" src="system.jsx"></script>
+<script type="text/babel" src="compose-notes.jsx"></script>
+<script type="text/babel" src="screen-home.jsx"></script>
+<script type="text/babel" src="screen-catalog.jsx"></script>
+<script type="text/babel" src="screen-plans.jsx"></script>
+<script type="text/babel" src="screen-form.jsx"></script>
+
+<!-- Design canvas -->
+<script type="text/babel" src="design-canvas.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="env,react">
+const { DesignCanvas, DCSection, DCArtboard } = window;
+
+function HandoffCard() {
+  const C = window.PM.c, F = window.PM.font, FM = window.PM.mono;
+  const steps = [
+    { n: '01', t: 'Guarda HANDOFF.md', s: 'Cópialo a docs/UI_REDESIGN.md en tu proyecto Android junto al CHECKLIST_EJECUCION.md actual.' },
+    { n: '02', t: 'Abre Codex en Android Studio', s: 'Asegúrate de que tiene acceso al repositorio completo.' },
+    { n: '03', t: 'Pega el prompt único', s: 'Sección 7 del MD. Le dice qué tocar y qué no.' },
+    { n: '04', t: 'Itera por archivos', s: 'Si Codex no lo hace todo, sigue el orden de la sección 8 (Color → Type → Theme → Components → Screens).' },
+    { n: '05', t: 'Smoke test tras cada Screen', s: './gradlew assembleDebug + comprobar que el flow completo sigue funcionando.' },
+  ];
+  return (
+    <div style={{ width: 560, padding: 36, background: C.bg, fontFamily: F, color: C.ink }}>
+      <div style={{ fontFamily: FM, fontSize: 11, letterSpacing: '0.08em', color: C.muted, textTransform: 'uppercase' }}>Bonus · Handoff</div>
+      <div style={{ marginTop: 14, fontSize: 28, fontWeight: 600, letterSpacing: '-0.03em', lineHeight: 1.15 }}>
+        Cómo mandarle esto a&nbsp;Codex.
+      </div>
+      <div style={{ marginTop: 12, fontSize: 14, lineHeight: 1.5, color: C.ink2 }}>
+        He preparado <b style={{ color: C.ink, fontFamily: FM, fontSize: 13 }}>HANDOFF.md</b> con
+        tokens en Kotlin listos, snippets de componentes (`SectionCard`, `MoneyText`, `ServiceLogo`)
+        y un <b style={{ color: C.ink }}>prompt único</b> que le pegas a Codex para que aplique
+        el rediseño sin tocar ViewModel ni data layer.
+      </div>
+      <div style={{ marginTop: 20, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {steps.map(s => (
+          <div key={s.n} style={{
+            display: 'flex', gap: 14, background: C.surface, padding: 14,
+            borderRadius: 14, border: `1px solid ${C.hairline2}`,
+          }}>
+            <div style={{ fontFamily: FM, fontSize: 11, color: C.muted, marginTop: 2, width: 24 }}>{s.n}</div>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em' }}>{s.t}</div>
+              <div style={{ fontSize: 12.5, color: C.ink2, marginTop: 4, lineHeight: 1.45 }}>{s.s}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{
+        marginTop: 22, padding: 16, borderRadius: 14, background: C.brand, color: '#fff',
+      }}>
+        <div style={{ fontSize: 11, opacity: 0.7, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Reglas duras</div>
+        <ul style={{ margin: '8px 0 0', paddingLeft: 18, fontSize: 13, lineHeight: 1.55 }}>
+          <li>No toca ViewModel ni capa data.</li>
+          <li>No cambia firmas de callbacks (onAddClick, onEditClick…).</li>
+          <li>Sustituye `Card` por `SectionCard`.</li>
+          <li>CTA principal = ink, no brand.</li>
+          <li>Números siempre con `fontFeatureSettings = "tnum"`.</li>
+        </ul>
+      </div>
+      <div style={{ marginTop: 22, fontFamily: FM, fontSize: 11, color: C.muted, lineHeight: 1.5 }}>
+        Archivo en la raíz del proyecto: <b style={{ color: C.ink }}>HANDOFF.md</b>
+      </div>
+    </div>
+  );
+}
+
+function CoverArtboard() {
+  const C = window.PM.c;
+  return (
+    <div style={{
+      width: 1320, padding: 64, background: C.bg, color: C.ink,
+      fontFamily: window.PM.font, position: 'relative', overflow: 'hidden',
+    }}>
+      {/* big watermark */}
+      <div style={{
+        position: 'absolute', right: -60, bottom: -120,
+        fontFamily: window.PM.font, fontWeight: 700, fontSize: 540,
+        letterSpacing: '-0.05em', color: C.brand, opacity: 0.06, lineHeight: 0.8,
+        pointerEvents: 'none',
+      }}>p</div>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', fontFamily: window.PM.mono, fontSize: 12, color: C.muted, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+        Rediseño · PayMember · v1
+        <div style={{ flex: 1, height: 1, background: C.hairline, maxWidth: 380 }}/>
+        <span>2026</span>
+      </div>
+      <div style={{ marginTop: 36, fontSize: 92, fontWeight: 600, letterSpacing: '-0.045em', lineHeight: 1.0, maxWidth: 1100 }}>
+        Gestiona tus suscripciones<br/>como un banco moderno.
+      </div>
+      <div style={{ marginTop: 28, maxWidth: 720, fontSize: 19, color: C.ink2, lineHeight: 1.5 }}>
+        Una propuesta visual completa para tu app Kotlin / Jetpack Compose: dirección, paleta,
+        tipografía, componentes, las cuatro pantallas principales y un mapping concreto
+        a tus archivos para implementarlo sin tocar la lógica.
+      </div>
+      <div style={{ display: 'flex', gap: 12, marginTop: 36, flexWrap: 'wrap' }}>
+        {['01 Dirección', '02 Paleta', '03 Tipografía', '04 Componentes', '05 Pantallas', '06 Compose'].map(t => (
+          <div key={t} style={{
+            fontFamily: window.PM.mono, fontSize: 12, fontWeight: 500,
+            padding: '8px 14px', borderRadius: 999, background: C.surface,
+            border: `1px solid ${C.hairline}`, color: C.ink2,
+          }}>{t}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DesignCanvas
+      bg={window.PM.c.bg}
+      title="PayMember · Rediseño visual"
+      subtitle="Dirección + sistema + pantallas + implementación en Compose"
+    >
+      <DCSection id="cover" title="Portada" subtitle="Propuesta de rediseño · v1">
+        <DCArtboard id="cover" label="Portada" width={1320} height={680}>
+          <CoverArtboard />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="direction" title="01 · Dirección visual" subtitle="Manifesto de la propuesta">
+        <DCArtboard id="manifesto" label="Manifesto" width={880} height={520}>
+          <window.Direction />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="foundations" title="02 · Foundations" subtitle="Color y tipografía">
+        <DCArtboard id="palette" label="Paleta" width={880} height={660}>
+          <window.Palette />
+        </DCArtboard>
+        <DCArtboard id="type" label="Tipografía" width={880} height={640}>
+          <window.TypeSheet />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="components" title="03 · Componentes" subtitle="Botones, chips, tarjetas, logos">
+        <DCArtboard id="comps" label="Sample" width={880} height={760}>
+          <window.ComponentSamples />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="screens" title="04 · Pantallas · light" subtitle="Cuatro pantallas principales en modo claro">
+        <DCArtboard id="home"    label="Home"       width={428} height={908}><window.HomeScreen /></DCArtboard>
+        <DCArtboard id="catalog" label="Catálogo"   width={428} height={908}><window.CatalogScreen /></DCArtboard>
+        <DCArtboard id="plans"   label="Tarifas"    width={428} height={908}><window.PlansScreen /></DCArtboard>
+        <DCArtboard id="form"    label="Configurar" width={428} height={908}><window.FormScreen /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="screens-dark" title="05 · Pantallas · dark" subtitle="Mismas pantallas con paleta oscura cálida">
+        <DCArtboard id="home-d"    label="Home · dark"       width={428} height={908}>
+          <div data-theme="dark" style={{ width:'100%', height:'100%' }}><window.HomeScreen /></div>
+        </DCArtboard>
+        <DCArtboard id="catalog-d" label="Catálogo · dark"   width={428} height={908}>
+          <div data-theme="dark" style={{ width:'100%', height:'100%' }}><window.CatalogScreen /></div>
+        </DCArtboard>
+        <DCArtboard id="plans-d"   label="Tarifas · dark"    width={428} height={908}>
+          <div data-theme="dark" style={{ width:'100%', height:'100%' }}><window.PlansScreen /></div>
+        </DCArtboard>
+        <DCArtboard id="form-d"    label="Configurar · dark" width={428} height={908}>
+          <div data-theme="dark" style={{ width:'100%', height:'100%' }}><window.FormScreen /></div>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="compose" title="06 · Implementación" subtitle="Mapping a tus archivos · Color, Type, Shape, componentes">
+        <DCArtboard id="compose-notes" label="Compose notes" width={880} height={1380}>
+          <window.ComposeNotes />
+        </DCArtboard>
+        <DCArtboard id="handoff-card" label="Handoff para Codex" width={560} height={1380}>
+          <HandoffCard />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

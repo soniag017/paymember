@@ -36,7 +36,12 @@ class SubscriptionReminderWorker(
 
         if (hasNotificationPermission()) {
             val periodText = if (subscription.period == BillingPeriod.MONTHLY) "mensual" else "anual"
-            val content = "${subscription.serviceName}: ${subscription.price} EUR ($periodText)"
+            val noticeText = if (subscription.reminderDaysBefore == 0) {
+                "vence hoy"
+            } else {
+                "vence en ${subscription.reminderDaysBefore} dias"
+            }
+            val content = "${subscription.serviceName}: ${subscription.price} EUR ($periodText), $noticeText"
             val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_popup_reminder)
                 .setContentTitle("Recordatorio de pago")

@@ -23,7 +23,11 @@ object ReminderScheduler {
             return
         }
 
-        val delay = calculateInitialDelay(subscription.billingDay, subscription.period)
+        val delay = calculateInitialDelay(
+            subscription.billingDay,
+            subscription.period,
+            subscription.reminderDaysBefore
+        )
         val input = Data.Builder()
             .putInt(SubscriptionReminderWorker.KEY_SUBSCRIPTION_ID, subscription.id)
             .build()
@@ -46,16 +50,21 @@ object ReminderScheduler {
 
     private fun workName(subscriptionId: Int): String = "$WORK_NAME_PREFIX$subscriptionId"
 
-    private fun calculateInitialDelay(billingDay: Int, period: BillingPeriod): Duration {
+    private fun calculateInitialDelay(
+        billingDay: Int,
+        period: BillingPeriod,
+        reminderDaysBefore: Int
+    ): Duration {
         val now = LocalDateTime.now()
-        val nextRun = nextTriggerDateTime(now, billingDay, period)
+        val nextRun = nextTriggerDateTime(now, billingDay, period, reminderDaysBefore)
         return Duration.between(now, nextRun)
     }
 
     private fun nextTriggerDateTime(
         now: LocalDateTime,
         billingDay: Int,
-        period: BillingPeriod
+        period: BillingPeriod,
+        reminderDaysBefore: Int
     ): LocalDateTime {
         val time = LocalTime.of(9, 0)
         val today = now.toLocalDate()
@@ -63,7 +72,7 @@ object ReminderScheduler {
         val candidate = when (period) {
             BillingPeriod.MONTHLY -> dateForMonth(today.year, today.monthValue, billingDay)
             BillingPeriod.YEARLY -> dateForYear(today.year, today.monthValue, billingDay)
-        }.atTime(time)
+        }.minusDays(reminderDaysBefore.toLong()).atTime(time)
 
         if (candidate.isAfter(now)) {
             return candidate
@@ -72,9 +81,13 @@ object ReminderScheduler {
         return when (period) {
             BillingPeriod.MONTHLY -> {
                 val nextMonth = today.plusMonths(1)
-                dateForMonth(nextMonth.year, nextMonth.monthValue, billingDay).atTime(time)
+                dateForMonth(nextMonth.year, nextMonth.monthValue, billingDay)
+                    .minusDays(reminderDaysBefore.toLong())
+                    .atTime(time)
             }
-            BillingPeriod.YEARLY -> dateForYear(today.year + 1, today.monthValue, billingDay).atTime(time)
+            BillingPeriod.YEARLY -> dateForYear(today.year + 1, today.monthValue, billingDay)
+                .minusDays(reminderDaysBefore.toLong())
+                .atTime(time)
         }
     }
 

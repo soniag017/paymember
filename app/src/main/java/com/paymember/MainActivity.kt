@@ -22,8 +22,12 @@ import androidx.navigation.navArgument
 import com.paymember.data.db.AppDatabase
 import com.paymember.data.reminder.ReminderScheduler
 import com.paymember.data.repository.SubscriptionRepository
+import com.paymember.ui.screens.SubscriptionCatalogScreen
 import com.paymember.ui.screens.SubscriptionFormScreen
 import com.paymember.ui.screens.SubscriptionListScreen
+import com.paymember.ui.screens.SubscriptionPlansScreen
+import com.paymember.ui.screens.findSubscriptionPlan
+import com.paymember.ui.screens.findSubscriptionTemplate
 import com.paymember.ui.theme.PayMemberTheme
 import com.paymember.viewmodel.SubscriptionViewModel
 import com.paymember.viewmodel.SubscriptionViewModelFactory
@@ -67,7 +71,7 @@ class MainActivity : ComponentActivity() {
                             subscriptions = subscriptions,
                             onAddClick = {
                                 viewModel.clearForm()
-                                navController.navigate("form/0")
+                                navController.navigate("catalog")
                             },
                             onEditClick = { id -> navController.navigate("form/$id") },
                             onDeleteClick = { subscription ->
@@ -78,13 +82,101 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
+                    composable("catalog") {
+                        SubscriptionCatalogScreen(
+                            onServiceSelected = { serviceId ->
+                                navController.navigate("plans/$serviceId")
+                            },
+                            onManualClick = {
+                                viewModel.clearForm()
+                                navController.navigate("form/0?manual=true")
+                            },
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
+
                     composable(
-                        route = "form/{id}",
-                        arguments = listOf(navArgument("id") { type = NavType.IntType })
+                        route = "plans/{serviceId}",
+                        arguments = listOf(navArgument("serviceId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val serviceId = backStackEntry.arguments?.getString("serviceId").orEmpty()
+                        val service = findSubscriptionTemplate(serviceId)
+
+                        if (service == null) {
+                            LaunchedEffect(serviceId) {
+                                navController.popBackStack()
+                            }
+                        } else {
+                            SubscriptionPlansScreen(
+                                service = service,
+                                onPlanSelected = { planId ->
+                                    navController.navigate("form/0?serviceId=$serviceId&planId=$planId&manual=false")
+                                },
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                    }
+
+                    composable(
+                        route = "form/{id}?serviceId={serviceId}&planId={planId}&manual={manual}",
+                        arguments = listOf(
+                            navArgument("id") { type = NavType.IntType },
+                            navArgument("serviceId") {
+                                type = NavType.StringType
+                                nullable = true
+                                defaultValue = null
+                            },
+                            navArgument("planId") {
+                                type = NavType.StringType
+                                nullable = true
+                                defaultValue = null
+                            },
+                            navArgument("manual") {
+                                type = NavType.BoolType
+                                defaultValue = false
+                            }
+                        )
                     ) { backStackEntry ->
                         val id = backStackEntry.arguments?.getInt("id") ?: 0
-                        LaunchedEffect(id) {
-                            viewModel.loadSubscription(id)
+                        val serviceId = backStackEntry.arguments?.getString("serviceId")
+                        val planId = backStackEntry.arguments?.getString("planId")
+                        val isManual = backStackEntry.arguments?.getBoolean("manual") ?: false
+                        LaunchedEffect(id, serviceId, planId, isManual) {
+                            if (id != 0) {
+                                viewModel.loadSubscription(id)
+                            } else if (isManual) {
+                                viewModel.clearForm()
+                                viewModel.updateForm {
+                                    copy(
+                                        reminderEnabled = true,
+                                        reminderDaysBefore = 1,
+                                        notes = ""
+                                    )
+                                }
+                            } else {
+                                val service = serviceId?.let { findSubscriptionTemplate(it) }
+                                val plan = if (serviceId != null && planId != null) {
+                                    findSubscriptionPlan(serviceId, planId)
+                                } else {
+                                    null
+                                }
+
+                                if (service != null && plan != null) {
+                                    viewModel.updateForm {
+                                        copy(
+                                            serviceName = "${service.name} - ${plan.name}",
+                                            price = plan.price,
+                                            billingDay = billingDay.ifBlank { "1" },
+                                            period = plan.period,
+                                            reminderEnabled = true,
+                                            reminderDaysBefore = 1,
+                                            notes = ""
+                                        )
+                                    }
+                                } else {
+                                    viewModel.clearForm()
+                                }
+                            }
                         }
 
                         SubscriptionFormScreen(
@@ -94,11 +186,19 @@ class MainActivity : ComponentActivity() {
                             onSaveClick = {
                                 viewModel.saveSubscription { saved ->
                                     ReminderScheduler.schedule(this@MainActivity, saved)
-                                    navController.popBackStack()
+                                    if (id == 0) {
+                                        navController.navigate("list") {
+                                            popUpTo("list") { inclusive = false }
+                                            launchSingleTop = true
+                                        }
+                                    } else {
+                                        navController.popBackStack()
+                                    }
                                 }
                             },
                             onBackClick = { navController.popBackStack() },
-                            isEdit = id != 0
+                            isEdit = id != 0,
+                            isManual = isManual
                         )
                     }
                 }

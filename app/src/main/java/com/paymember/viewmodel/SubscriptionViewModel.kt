@@ -20,6 +20,7 @@ data class SubscriptionFormState(
     val billingDay: String = "",
     val period: BillingPeriod = BillingPeriod.MONTHLY,
     val reminderEnabled: Boolean = false,
+    val reminderDaysBefore: Int = 0,
     val notes: String = ""
 )
 
@@ -52,6 +53,7 @@ class SubscriptionViewModel(
                 billingDay = item.billingDay.toString(),
                 period = item.period,
                 reminderEnabled = item.reminderEnabled,
+                reminderDaysBefore = item.reminderDaysBefore,
                 notes = item.notes.orEmpty()
             )
         }
@@ -71,6 +73,7 @@ class SubscriptionViewModel(
             billingDay = billingDay,
             period = current.period,
             reminderEnabled = current.reminderEnabled,
+            reminderDaysBefore = current.reminderDaysBefore.coerceIn(0, 30),
             notes = current.notes.ifBlank { null }
         )
 
