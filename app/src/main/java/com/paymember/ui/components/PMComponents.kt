@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -96,7 +98,8 @@ data class ServiceBrand(
     val key: String,
     val bg: Color,
     val fg: Color,
-    val mark: String
+    val mark: String,
+    val drawable: Int? = null
 )
 
 @Composable
@@ -112,12 +115,21 @@ fun ServiceLogo(
             .background(service.bg),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = service.mark,
-            color = service.fg,
-            fontWeight = FontWeight.Bold,
-            fontSize = (if (service.mark.length <= 2) size.value * 0.42f else size.value * 0.26f).sp,
-            maxLines = 1
-        )
+        if (service.drawable != null) {
+            Icon(
+                painter = painterResource(service.drawable),
+                contentDescription = null,
+                tint = service.fg,
+                modifier = Modifier.size(size * 0.58f)
+            )
+        } else {
+            Text(
+                text = service.mark,
+                color = service.fg,
+                fontWeight = FontWeight.Bold,
+                fontSize = (if (service.mark.length <= 2) size.value * 0.42f else size.value * 0.26f).sp,
+                maxLines = 1
+            )
+        }
     }
 }

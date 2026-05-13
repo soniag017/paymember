@@ -12,6 +12,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -24,6 +26,7 @@ import com.paymember.data.remote.RemoteAuthManager
 import com.paymember.data.remote.SessionStore
 import com.paymember.data.reminder.ReminderScheduler
 import com.paymember.data.repository.SubscriptionRepository
+import com.paymember.ui.screens.BillingCalendarScreen
 import com.paymember.ui.screens.SubscriptionCatalogScreen
 import com.paymember.ui.screens.SubscriptionFormScreen
 import com.paymember.ui.screens.SubscriptionListScreen
@@ -38,6 +41,8 @@ import com.paymember.viewmodel.SubscriptionViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
+private const val DEV_SKIP_LOGIN = true
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,10 +52,15 @@ class MainActivity : ComponentActivity() {
         val sessionStore = SessionStore(this)
         val apiService = ApiClient(sessionStore).create(baseUrl)
         val authManager = RemoteAuthManager(apiService, sessionStore)
-        val repository = SubscriptionRepository(apiService, authManager)
+        val repository = SubscriptionRepository(
+            apiService = apiService,
+            authManager = authManager,
+            demoMode = DEV_SKIP_LOGIN && !authManager.isLoggedIn()
+        )
 
         setContent {
-            PayMemberTheme {
+            var darkTheme by rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
+            PayMemberTheme(darkTheme = darkTheme) {
                 val navController = rememberNavController()
                 val notificationPermissionLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.RequestPermission(),
@@ -87,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                val startDestination = if (authManager.isLoggedIn()) "list" else "login"
+                val startDestination = if (DEV_SKIP_LOGIN || authManager.isLoggedIn()) "list" else "login"
 
                 LaunchedEffect(authState.isAuthenticated) {
                     if (authState.isAuthenticated) {
@@ -114,9 +124,21 @@ class MainActivity : ComponentActivity() {
                     composable("list") {
                         SubscriptionListScreen(
                             subscriptions = subscriptions,
+                            displayName = authState.email.toDisplayName().ifBlank {
+                                authManager.currentDisplayName() ?: "Invitada"
+                            },
+                            darkTheme = darkTheme,
+                            onToggleDarkTheme = { darkTheme = !darkTheme },
                             onAddClick = {
                                 viewModel.clearForm()
                                 navController.navigate("catalog")
+                            },
+                            onManualClick = {
+                                viewModel.clearForm()
+                                navController.navigate("form/0?manual=true")
+                            },
+                            onCalendarClick = {
+                                navController.navigate("calendar")
                             },
                             onEditClick = { id -> navController.navigate("form/$id") },
                             onDeleteClick = { subscription ->
@@ -124,6 +146,13 @@ class MainActivity : ComponentActivity() {
                                     ReminderScheduler.cancel(this@MainActivity, deletedId)
                                 }
                             }
+                        )
+                    }
+
+                    composable("calendar") {
+                        BillingCalendarScreen(
+                            subscriptions = subscriptions,
+                            onBackClick = { navController.popBackStack() }
                         )
                     }
 
@@ -250,4 +279,19 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+private fun String.toDisplayName(): String {
+    return substringBefore("@")
+        .replace('.', ' ')
+        .replace('_', ' ')
+        .replace('-', ' ')
+        .trim()
+        .split(" ")
+        .filter { it.isNotBlank() }
+        .joinToString(" ") { word ->
+            word.replaceFirstChar { char ->
+                if (char.isLowerCase()) char.titlecase() else char.toString()
+            }
+        }
 }

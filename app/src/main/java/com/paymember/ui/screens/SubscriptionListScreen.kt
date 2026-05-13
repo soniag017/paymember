@@ -22,8 +22,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AssistChip
@@ -53,7 +55,6 @@ import com.paymember.ui.components.ServiceLogo
 import com.paymember.ui.components.Services
 import com.paymember.ui.theme.Butter
 import com.paymember.ui.theme.Coral
-import com.paymember.ui.theme.ForestSoft
 import com.paymember.ui.theme.Lavender
 import com.paymember.ui.theme.Moss
 import com.paymember.ui.theme.Rose
@@ -66,40 +67,53 @@ import java.util.Locale
 @Composable
 fun SubscriptionListScreen(
     subscriptions: List<SubscriptionEntity>,
+    displayName: String,
+    darkTheme: Boolean,
+    onToggleDarkTheme: () -> Unit,
     onAddClick: () -> Unit,
+    onManualClick: () -> Unit,
+    onCalendarClick: () -> Unit,
     onEditClick: (Int) -> Unit,
     onDeleteClick: (SubscriptionEntity) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(start = 26.dp, top = 38.dp, end = 22.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(18.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        item { HomeHeader() }
-        item { CreateSubscriptionPanel(onAddClick = onAddClick) }
-        item { MonthSectionHeader() }
-        item { MonthlyHeroCard(subscriptions = subscriptions) }
-        item { UpcomingStrip(subscriptions = subscriptions) }
-        item { SubscriptionsHeader(count = subscriptions.size) }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 26.dp, top = 38.dp, end = 22.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            item { HomeHeader(displayName = displayName, darkTheme = darkTheme, onToggleDarkTheme = onToggleDarkTheme) }
+            item { CreateSubscriptionPanel(onCatalogClick = onAddClick, onManualClick = onManualClick) }
+            item { MonthSectionHeader() }
+            item { MonthlyHeroCard(subscriptions = subscriptions) }
+            item { UpcomingStrip(subscriptions = subscriptions, onCalendarClick = onCalendarClick) }
+            item { SubscriptionsHeader(count = subscriptions.size) }
 
-        if (subscriptions.isEmpty()) {
-            item { EmptyState(onAddClick = onAddClick) }
-        } else {
-            items(subscriptions, key = { it.id }) { item ->
-                SubscriptionItem(
-                    item = item,
-                    onClick = { onEditClick(item.id) },
-                    onDeleteClick = { onDeleteClick(item) }
-                )
+            if (subscriptions.isEmpty()) {
+                item { EmptyState(onAddClick = onAddClick) }
+            } else {
+                items(subscriptions, key = { it.id }) { item ->
+                    SubscriptionItem(
+                        item = item,
+                        onClick = { onEditClick(item.id) },
+                        onDeleteClick = { onDeleteClick(item) }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun HomeHeader() {
+private fun HomeHeader(
+    displayName: String,
+    darkTheme: Boolean,
+    onToggleDarkTheme: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,12 +131,21 @@ private fun HomeHeader() {
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-                Eyebrow("HOLA, MARTA")
-                Text("PayMember", style = MaterialTheme.typography.titleMedium)
+                Eyebrow("HOLA, ${displayName.uppercase(Locale.getDefault())}")
+                Text(
+                    "PayMember",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             HeaderIconButton(icon = Icons.Default.Search, contentDescription = "Buscar")
+            HeaderIconButton(
+                icon = if (darkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                contentDescription = if (darkTheme) "Activar modo claro" else "Activar modo oscuro",
+                onClick = onToggleDarkTheme
+            )
             HeaderIconButton(icon = Icons.Default.Notifications, contentDescription = "Avisos")
         }
     }
@@ -131,7 +154,8 @@ private fun HomeHeader() {
 @Composable
 private fun HeaderIconButton(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    contentDescription: String
+    contentDescription: String,
+    onClick: () -> Unit = {}
 ) {
     Surface(
         modifier = Modifier.size(40.dp),
@@ -140,18 +164,21 @@ private fun HeaderIconButton(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shadowElevation = 1.dp
     ) {
-        IconButton(onClick = {}) {
+        IconButton(onClick = onClick) {
             Icon(icon, contentDescription = contentDescription, tint = MaterialTheme.colorScheme.onSurface)
         }
     }
 }
 
 @Composable
-private fun CreateSubscriptionPanel(onAddClick: () -> Unit) {
+private fun CreateSubscriptionPanel(
+    onCatalogClick: () -> Unit,
+    onManualClick: () -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(194.dp),
+            .height(214.dp),
         color = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
         shape = MaterialTheme.shapes.large,
@@ -175,28 +202,40 @@ private fun CreateSubscriptionPanel(onAddClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f),
                     fontWeight = FontWeight.SemiBold
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.padding(top = 8.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
                     Button(
-                        onClick = onAddClick,
-                        modifier = Modifier.height(42.dp),
-                        shape = CircleShape,
+                        onClick = onCatalogClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(52.dp),
+                        shape = MaterialTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = MaterialTheme.colorScheme.primary
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
                         ),
-                        contentPadding = PaddingValues(horizontal = 18.dp)
+                        contentPadding = PaddingValues(horizontal = 14.dp)
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                         Text("Catálogo", modifier = Modifier.padding(start = 8.dp), style = MaterialTheme.typography.labelLarge)
                     }
                     OutlinedButton(
-                        onClick = onAddClick,
-                        modifier = Modifier.height(42.dp),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.28f)),
-                        contentPadding = PaddingValues(horizontal = 18.dp)
+                        onClick = onManualClick,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(52.dp),
+                        shape = MaterialTheme.shapes.small,
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.42f)),
+                        contentPadding = PaddingValues(horizontal = 14.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
                     ) {
-                        Text("Manual", color = Color.White, style = MaterialTheme.typography.labelLarge)
+                        Text("Manual", style = MaterialTheme.typography.labelLarge)
                     }
                 }
             }
@@ -257,7 +296,11 @@ private fun MonthlyHeroCard(subscriptions: List<SubscriptionEntity>) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Surface(color = ForestSoft, contentColor = MaterialTheme.colorScheme.primary, shape = CircleShape) {
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shape = CircleShape
+                ) {
                     Text(
                         "~ -€4,12",
                         modifier = Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
@@ -328,17 +371,35 @@ private fun LegendRows(items: List<SubscriptionEntity>) {
 }
 
 @Composable
-private fun UpcomingStrip(subscriptions: List<SubscriptionEntity>) {
+private fun UpcomingStrip(
+    subscriptions: List<SubscriptionEntity>,
+    onCalendarClick: () -> Unit
+) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Próximos cobros", style = MaterialTheme.typography.titleMedium)
-            Text("Ver calendario", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Surface(
+                onClick = onCalendarClick,
+                color = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
+                shape = CircleShape,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            ) {
+                Text(
+                    "Ver calendario",
+                    modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
         }
         if (subscriptions.isEmpty()) {
             SectionCard { Text("Añade una suscripción para ver tus próximos cargos.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         } else {
+            val upcoming = subscriptions
+                .sortedWith(compareBy<SubscriptionEntity> { nextChargeDate(it.billingDay) }.thenBy { it.serviceName })
+                .take(8)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(subscriptions.sortedBy { nextChargeDistance(it.billingDay) }.take(8), key = { it.id }) { item ->
+                items(upcoming, key = { it.id }) { item ->
                     UpcomingCard(item = item)
                 }
             }
@@ -348,11 +409,14 @@ private fun UpcomingStrip(subscriptions: List<SubscriptionEntity>) {
 
 @Composable
 private fun UpcomingCard(item: SubscriptionEntity) {
+    val nextCharge = nextChargeDate(item.billingDay)
+    val month = nextCharge.month.getDisplayName(TextStyle.SHORT, Locale("es", "ES")).uppercase(Locale("es", "ES"))
+
     SectionCard(modifier = Modifier.width(96.dp), padding = PaddingValues(12.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(verticalAlignment = Alignment.Bottom) {
-                Text("${item.billingDay}", style = MaterialTheme.typography.headlineSmall.copy(fontFeatureSettings = "tnum"))
-                Text(" MAY", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("${nextCharge.dayOfMonth}", style = MaterialTheme.typography.headlineSmall.copy(fontFeatureSettings = "tnum"))
+                Text(" $month", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 22.dp)
@@ -418,9 +482,14 @@ private fun SubscriptionEntity.monthlyEquivalent(): Double {
     return if (period == BillingPeriod.MONTHLY) price else price / 12.0
 }
 
-private fun nextChargeDistance(billingDay: Int): Int {
-    val today = LocalDate.now().dayOfMonth
-    return if (billingDay >= today) billingDay - today else billingDay + 31 - today
+private fun nextChargeDate(billingDay: Int): LocalDate {
+    val today = LocalDate.now()
+    val safeDay = billingDay.coerceIn(1, 31)
+    val thisMonthDate = today.withDayOfMonth(safeDay.coerceAtMost(today.lengthOfMonth()))
+    if (!thisMonthDate.isBefore(today)) return thisMonthDate
+
+    val nextMonth = today.plusMonths(1)
+    return nextMonth.withDayOfMonth(safeDay.coerceAtMost(nextMonth.lengthOfMonth()))
 }
 
 private fun SubscriptionEntity.cleanName(): String = serviceName.substringBefore(" - ").ifBlank { serviceName }

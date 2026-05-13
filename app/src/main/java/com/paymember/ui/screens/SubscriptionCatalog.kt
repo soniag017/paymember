@@ -35,7 +35,10 @@ val SubscriptionCategories = listOf(
     SubscriptionCategoryTemplate("shopping", "Compras y entregas", "Envios, comida a domicilio y supermercados"),
     SubscriptionCategoryTemplate("cloud", "Nube y productividad", "Almacenamiento, ofimatica y herramientas creativas"),
     SubscriptionCategoryTemplate("gaming", "Gaming", "Catalogos de juegos, online y juego en la nube"),
-    SubscriptionCategoryTemplate("ai", "IA y asistentes", "Asistentes, busqueda y herramientas con IA")
+    SubscriptionCategoryTemplate("ai", "IA y asistentes", "Asistentes, busqueda y herramientas con IA"),
+    SubscriptionCategoryTemplate("learning", "Aprendizaje", "Idiomas, cursos y formacion online"),
+    SubscriptionCategoryTemplate("wellness", "Bienestar", "Deporte, meditacion y entrenamiento"),
+    SubscriptionCategoryTemplate("security", "Privacidad", "VPN, password managers y correo seguro")
 )
 
 val PopularSubscriptionTemplates = listOf(
@@ -532,6 +535,377 @@ val PopularSubscriptionTemplates = listOf(
         summary = "IA integrada en Notion para escribir, resumir y consultar espacios de trabajo.",
         plans = listOf(
             plan("ai", "Notion AI", "10.00", "USD", BillingPeriod.MONTHLY, "Complemento IA", "Resumenes", "Preguntas sobre workspace")
+        )
+    ),
+    service(
+        id = "atresplayer",
+        name = "atresplayer",
+        logoText = "AT",
+        categoryId = "streaming",
+        accentColor = Color(0xFFFF6A00),
+        summary = "Originales, preestrenos, television a la carta y plan familiar.",
+        plans = listOf(
+            plan("ads", "Premium con anuncios", "5.99", "1080p", "1 perfil", "Catalogo y preestrenos"),
+            plan("no-ads", "Premium sin anuncios", "7.99", "4K", "Descarga offline", "Sin publicidad"),
+            plan("family", "Premium familiar", "9.99", "4 perfiles", "4K", "Sin publicidad"),
+            plan("yearly", "Premium anual", "79.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Sin anuncios", "Dos meses gratis")
+        )
+    ),
+    service(
+        id = "mitele-plus",
+        name = "mitele PLUS",
+        logoText = "mt+",
+        categoryId = "streaming",
+        accentColor = Color(0xFF1C7ED6),
+        summary = "Contenido de Mediaset, directos, programas y planes mensual/anual.",
+        plans = listOf(
+            plan("basic", "Plan basico", "5.00", "Contenido mitele PLUS", "Directos y programas", "Cancela cuando quieras"),
+            plan("family", "Plan familiar", "8.00", "Mas perfiles", "Contenido PLUS", "Uso compartido"),
+            plan("basic-yearly", "Basico anual", "42.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismo plan basico")
+        )
+    ),
+    service(
+        id = "flixole",
+        name = "FlixOle",
+        logoText = "Fx",
+        categoryId = "streaming",
+        accentColor = Color(0xFFE8D08C),
+        logoTextColor = Color(0xFF111111),
+        summary = "Cine espanol, clasicos, series y catalogo europeo.",
+        plans = listOf(
+            plan("monthly", "Mensual", "4.99", "Catalogo completo", "14 dias gratis", "Sin permanencia"),
+            plan("yearly", "Anual", "49.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Catalogo completo", "Ahorro frente al mes")
+        )
+    ),
+    service(
+        id = "mubi",
+        name = "MUBI",
+        logoText = "M",
+        categoryId = "streaming",
+        accentColor = Color(0xFF111111),
+        summary = "Cine de autor, peliculas seleccionadas y estrenos curados.",
+        plans = listOf(
+            plan("monthly", "Mensual", "12.99", "Cine curado", "Sin anuncios", "Descargas"),
+            plan("yearly", "Anual", "95.88", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo MUBI")
+        )
+    ),
+    service(
+        id = "podimo",
+        name = "Podimo",
+        logoText = "P",
+        categoryId = "music",
+        accentColor = Color(0xFFE84D7A),
+        summary = "Podcasts exclusivos, audiolibros y escucha offline.",
+        plans = listOf(
+            plan("monthly", "Mensual", "4.99", "Podcasts exclusivos", "20h de audiolibros", "Modo offline"),
+            plan("yearly", "Anual", "49.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Paga 10 meses", "30 dias gratis")
+        )
+    ),
+    service(
+        id = "storytel",
+        name = "Storytel",
+        logoText = "ST",
+        categoryId = "music",
+        accentColor = Color(0xFFFF5B35),
+        summary = "Audiolibros, ebooks, originales y modo infantil.",
+        plans = listOf(
+            plan("unlimited", "Unlimited", "8.99", "1 cuenta", "Escucha y lectura ilimitada", "Offline y Kids Mode"),
+            plan("family", "Family", "15.99", "2 cuentas", "Acceso ilimitado", "Compartido")
+        )
+    ),
+    service(
+        id = "everand",
+        name = "Everand",
+        logoText = "E",
+        categoryId = "music",
+        accentColor = Color(0xFF111111),
+        summary = "Ebooks, audiolibros, revistas, podcasts y documentos seleccionados.",
+        plans = listOf(
+            plan("monthly", "Mensual", "11.99", "USD", BillingPeriod.MONTHLY, "Lectura y audio", "Catalogo Everand", "Cancela cuando quieras"),
+            plan("yearly", "Anual", "119.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo Everand")
+        )
+    ),
+    service(
+        id = "duolingo",
+        name = "Super Duolingo",
+        logoText = "D",
+        categoryId = "learning",
+        accentColor = Color(0xFF58CC02),
+        logoTextColor = Color(0xFF111111),
+        summary = "Idiomas gamificados sin anuncios, corazones ilimitados y practica personalizada.",
+        plans = listOf(
+            plan("super", "Super", "13.99", "Sin anuncios", "Corazones ilimitados", "Practica personalizada"),
+            plan("super-yearly", "Super anual", "87.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismas funciones Super"),
+            plan("family", "Super familiar", "122.99", "EUR", BillingPeriod.YEARLY, "Hasta 6 cuentas", "Pago anual", "Plan familiar")
+        )
+    ),
+    service(
+        id = "babbel",
+        name = "Babbel",
+        logoText = "Bb",
+        categoryId = "learning",
+        accentColor = Color(0xFFFFB000),
+        logoTextColor = Color(0xFF111111),
+        summary = "Cursos de idiomas por niveles, dialogos y repasos.",
+        plans = listOf(
+            plan("monthly", "Mensual", "12.99", "1 idioma", "Lecciones guiadas", "Repaso"),
+            plan("yearly", "Anual", "83.88", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "1 idioma"),
+            plan("lifetime", "Lifetime", "199.99", "EUR", BillingPeriod.YEARLY, "Pago unico orientativo", "Todos los idiomas", "Sin renovacion")
+        )
+    ),
+    service(
+        id = "busuu",
+        name = "Busuu",
+        logoText = "Bu",
+        categoryId = "learning",
+        accentColor = Color(0xFF2E68FF),
+        summary = "Idiomas con plan de estudio, comunidad y certificados.",
+        plans = listOf(
+            plan("monthly", "Premium mensual", "13.98", "Lecciones completas", "Sin anuncios", "Modo offline"),
+            plan("yearly", "Premium anual", "83.76", "EUR", BillingPeriod.YEARLY, "Pago anual", "Certificados", "Ahorro frente al mes")
+        )
+    ),
+    service(
+        id = "coursera-plus",
+        name = "Coursera Plus",
+        logoText = "C",
+        categoryId = "learning",
+        accentColor = Color(0xFF2A73CC),
+        summary = "Cursos y certificados profesionales de universidades y empresas.",
+        plans = listOf(
+            plan("monthly", "Plus mensual", "59.00", "USD", BillingPeriod.MONTHLY, "Catalogo Plus", "Certificados", "Cancela cuando quieras"),
+            plan("yearly", "Plus anual", "399.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Certificados incluidos")
+        )
+    ),
+    service(
+        id = "skillshare",
+        name = "Skillshare",
+        logoText = "S",
+        categoryId = "learning",
+        accentColor = Color(0xFF00FF84),
+        logoTextColor = Color(0xFF111111),
+        summary = "Clases creativas online de diseno, foto, negocio y productividad.",
+        plans = listOf(
+            plan("monthly", "Mensual", "29.00", "USD", BillingPeriod.MONTHLY, "Clases ilimitadas", "Proyectos", "Offline en app"),
+            plan("yearly", "Anual", "168.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Clases ilimitadas")
+        )
+    ),
+    service(
+        id = "masterclass",
+        name = "MasterClass",
+        logoText = "MC",
+        categoryId = "learning",
+        accentColor = Color(0xFFE74C3C),
+        summary = "Clases online impartidas por expertos y creadores reconocidos.",
+        plans = listOf(
+            plan("individual", "Individual anual", "120.00", "USD", BillingPeriod.YEARLY, "1 dispositivo", "Catalogo completo", "Pago anual"),
+            plan("duo", "Duo anual", "180.00", "USD", BillingPeriod.YEARLY, "2 dispositivos", "Descargas", "Pago anual"),
+            plan("family", "Family anual", "240.00", "USD", BillingPeriod.YEARLY, "6 dispositivos", "Descargas", "Pago anual")
+        )
+    ),
+    service(
+        id = "proton-unlimited",
+        name = "Proton Unlimited",
+        logoText = "P",
+        categoryId = "security",
+        accentColor = Color(0xFF6D4AFF),
+        summary = "Correo, VPN, Drive, Pass y Calendar con enfoque en privacidad.",
+        plans = listOf(
+            plan("monthly", "Mensual", "12.99", "EUR", BillingPeriod.MONTHLY, "Mail, VPN y Drive", "Pass incluido", "1 usuario"),
+            plan("yearly", "Anual", "119.88", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Suite Proton")
+        )
+    ),
+    service(
+        id = "nordvpn",
+        name = "NordVPN",
+        logoText = "N",
+        categoryId = "security",
+        accentColor = Color(0xFF4687FF),
+        summary = "VPN multiplataforma con proteccion contra amenazas segun plan.",
+        plans = listOf(
+            plan("monthly", "Standard mensual", "12.99", "VPN", "10 dispositivos", "Sin permanencia"),
+            plan("yearly", "Standard anual", "59.88", "EUR", BillingPeriod.YEARLY, "Pago anual", "VPN", "Ahorro promocional variable")
+        )
+    ),
+    service(
+        id = "1password",
+        name = "1Password",
+        logoText = "1P",
+        categoryId = "security",
+        accentColor = Color(0xFF2368D5),
+        summary = "Gestor de contrasenas, passkeys, tarjetas y secretos familiares.",
+        plans = listOf(
+            plan("individual", "Individual", "2.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Apps ilimitadas", "1 GB documentos"),
+            plan("families", "Families", "4.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Hasta 5 personas", "Cuentas familiares")
+        )
+    ),
+    service(
+        id = "todoist",
+        name = "Todoist",
+        logoText = "T",
+        categoryId = "cloud",
+        accentColor = Color(0xFFE44332),
+        summary = "Tareas, proyectos, filtros, recordatorios y calendario.",
+        plans = listOf(
+            plan("pro", "Pro mensual", "5.00", "USD", BillingPeriod.MONTHLY, "Recordatorios", "Calendario", "Filtros"),
+            plan("pro-yearly", "Pro anual", "48.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
+        )
+    ),
+    service(
+        id = "github-copilot",
+        name = "GitHub Copilot",
+        logoText = "GH",
+        categoryId = "ai",
+        accentColor = Color(0xFF111111),
+        summary = "Asistente de programacion integrado en IDEs y GitHub.",
+        plans = listOf(
+            plan("pro", "Pro", "10.00", "USD", BillingPeriod.MONTHLY, "Completado de codigo", "Chat", "Modelos avanzados"),
+            plan("pro-plus", "Pro+", "39.00", "USD", BillingPeriod.MONTHLY, "Mas limites", "Modelos premium", "Funciones avanzadas")
+        )
+    ),
+    service(
+        id = "cursor",
+        name = "Cursor",
+        logoText = "C",
+        categoryId = "ai",
+        accentColor = Color(0xFF111111),
+        summary = "Editor de codigo con IA, agentes, autocompletado y contexto de repo.",
+        plans = listOf(
+            plan("pro", "Pro", "20.00", "USD", BillingPeriod.MONTHLY, "Uso ampliado", "Agentes", "Autocompletado"),
+            plan("pro-yearly", "Pro anual", "192.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
+        )
+    ),
+    service(
+        id = "midjourney",
+        name = "Midjourney",
+        logoText = "MJ",
+        categoryId = "ai",
+        accentColor = Color(0xFF111111),
+        summary = "Generacion de imagenes por IA con planes por tiempo GPU.",
+        plans = listOf(
+            plan("basic", "Basic", "10.00", "USD", BillingPeriod.MONTHLY, "GPU limitada", "Galeria", "Uso personal"),
+            plan("standard", "Standard", "30.00", "USD", BillingPeriod.MONTHLY, "Mas GPU", "Relax mode", "Uso frecuente"),
+            plan("basic-yearly", "Basic anual", "96.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro", "GPU limitada")
+        )
+    ),
+    service(
+        id = "apple-arcade",
+        name = "Apple Arcade",
+        logoText = "A",
+        categoryId = "gaming",
+        accentColor = Color(0xFF111111),
+        summary = "Catalogo de juegos sin anuncios ni compras dentro de la app.",
+        plans = listOf(
+            plan("monthly", "Mensual", "6.99", "Juegos Apple Arcade", "Compartir en familia", "Sin anuncios"),
+            plan("apple-one", "Incluido en Apple One", "19.95", "Bundle Apple", "Servicios combinados", "Precio segun plan")
+        )
+    ),
+    service(
+        id = "google-play-pass",
+        name = "Google Play Pass",
+        logoText = "GP",
+        categoryId = "gaming",
+        accentColor = Color(0xFF4285F4),
+        summary = "Apps y juegos Android sin anuncios ni compras en la app.",
+        plans = listOf(
+            plan("monthly", "Mensual", "4.99", "Apps y juegos", "Sin anuncios", "Compartible en familia"),
+            plan("yearly", "Anual", "29.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo Play Pass")
+        )
+    ),
+    service(
+        id = "ubisoft-plus",
+        name = "Ubisoft+",
+        logoText = "U+",
+        categoryId = "gaming",
+        accentColor = Color(0xFF111111),
+        summary = "Catalogo Ubisoft, ediciones premium y acceso dia uno segun plan.",
+        plans = listOf(
+            plan("classics", "Classics", "7.99", "Catalogo clasico", "PC", "Juegos seleccionados"),
+            plan("premium", "Premium", "17.99", "Novedades", "DLC y ediciones premium", "PC y nube segun disponibilidad")
+        )
+    ),
+    service(
+        id = "roblox-premium",
+        name = "Roblox Premium",
+        logoText = "R",
+        categoryId = "gaming",
+        accentColor = Color(0xFF111111),
+        summary = "Robux mensuales, ventajas de mercado y beneficios en experiencias.",
+        plans = listOf(
+            plan("450", "Premium 450", "5.99", "450 Robux/mes", "Ventajas premium", "Renovacion mensual"),
+            plan("1000", "Premium 1000", "11.99", "1000 Robux/mes", "Ventajas premium", "Renovacion mensual"),
+            plan("2200", "Premium 2200", "23.99", "2200 Robux/mes", "Ventajas premium", "Renovacion mensual")
+        )
+    ),
+    service(
+        id = "fortnite-crew",
+        name = "Fortnite Crew",
+        logoText = "F",
+        categoryId = "gaming",
+        accentColor = Color(0xFF7A5CFF),
+        summary = "Suscripcion mensual de Fortnite con pase, pavos y recompensas.",
+        plans = listOf(
+            plan("monthly", "Crew mensual", "11.99", "Pase de batalla", "1000 paVos", "Pack mensual")
+        )
+    ),
+    service(
+        id = "humble-choice",
+        name = "Humble Choice",
+        logoText = "H",
+        categoryId = "gaming",
+        accentColor = Color(0xFFCC2929),
+        summary = "Juegos PC mensuales, Humble Vault y descuentos en tienda.",
+        plans = listOf(
+            plan("monthly", "Mensual", "11.99", "USD", BillingPeriod.MONTHLY, "Juegos mensuales", "Descuentos", "Cancela cuando quieras"),
+            plan("yearly", "Anual", "129.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Juegos mensuales", "Ahorro frente al mes")
+        )
+    ),
+    service(
+        id = "strava",
+        name = "Strava",
+        logoText = "S",
+        categoryId = "wellness",
+        accentColor = Color(0xFFFC4C02),
+        summary = "Seguimiento deportivo, segmentos, rutas y analisis de entrenamiento.",
+        plans = listOf(
+            plan("monthly", "Mensual", "11.99", "Analisis", "Rutas", "Segmentos"),
+            plan("yearly", "Anual", "79.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones premium")
+        )
+    ),
+    service(
+        id = "calm",
+        name = "Calm",
+        logoText = "Ca",
+        categoryId = "wellness",
+        accentColor = Color(0xFF2A73CC),
+        summary = "Meditacion, sueno, musica relajante y programas guiados.",
+        plans = listOf(
+            plan("monthly", "Mensual", "14.99", "USD", BillingPeriod.MONTHLY, "Meditaciones", "Sleep Stories", "Musica"),
+            plan("yearly", "Anual", "69.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
+        )
+    ),
+    service(
+        id = "headspace",
+        name = "Headspace",
+        logoText = "H",
+        categoryId = "wellness",
+        accentColor = Color(0xFFFF7F32),
+        summary = "Meditacion, mindfulness, foco, sueno y bienestar mental.",
+        plans = listOf(
+            plan("monthly", "Mensual", "12.99", "USD", BillingPeriod.MONTHLY, "Meditaciones", "Sueno", "Cursos"),
+            plan("yearly", "Anual", "69.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
+        )
+    ),
+    service(
+        id = "peloton",
+        name = "Peloton",
+        logoText = "P",
+        categoryId = "wellness",
+        accentColor = Color(0xFFE62D2E),
+        summary = "Clases de fitness online, fuerza, bici, yoga y entrenamientos.",
+        plans = listOf(
+            plan("app-one", "App One", "12.99", "USD", BillingPeriod.MONTHLY, "Clases seleccionadas", "Entrenamientos", "App"),
+            plan("app-plus", "App+", "24.00", "USD", BillingPeriod.MONTHLY, "Mas clases", "Equipos Peloton", "Metricas")
         )
     )
 )

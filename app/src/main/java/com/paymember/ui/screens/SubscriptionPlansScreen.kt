@@ -60,55 +60,59 @@ fun SubscriptionPlansScreen(
     var selectedPlanId by remember(service.id) { mutableStateOf(recommendedPlanId ?: service.plans.firstOrNull()?.id.orEmpty()) }
     val selectedPlan = service.plans.firstOrNull { it.id == selectedPlanId } ?: service.plans.first()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        item {
-            PlansHeader(onBackClick = onBackClick)
-        }
-
-        item {
-            StepProgress(step = 2)
-        }
-
-        item {
-            ServiceHeader(service = service)
-        }
-
-        items(service.plans, key = { it.id }) { plan ->
-            PlanCard(
-                service = service,
-                plan = plan,
-                recommended = plan.id == recommendedPlanId,
-                selected = plan.id == selectedPlanId,
-                onClick = { selectedPlanId = plan.id }
-            )
-        }
-
-        item {
-            Button(
-                onClick = { onPlanSelected(selectedPlan.id) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
-                shape = MaterialTheme.shapes.small
-            ) {
-                Text("Continuar con ${selectedPlan.name}")
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, modifier = Modifier.size(18.dp))
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            item {
+                PlansHeader(onBackClick = onBackClick)
             }
-        }
-        item {
-            Text(
-                "Precios orientativos. Algunos servicios cambian tarifas por promociones, impuestos, tiendas de apps o proveedores externos.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-            )
+
+            item {
+                StepProgress(step = 2)
+            }
+
+            item {
+                ServiceHeader(service = service)
+            }
+
+            items(service.plans, key = { it.id }) { plan ->
+                PlanCard(
+                    service = service,
+                    plan = plan,
+                    recommended = plan.id == recommendedPlanId,
+                    selected = plan.id == selectedPlanId,
+                    onClick = { selectedPlanId = plan.id }
+                )
+            }
+
+            item {
+                Button(
+                    onClick = { onPlanSelected(selectedPlan.id) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Text("Continuar con ${selectedPlan.name}")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, modifier = Modifier.size(18.dp))
+                }
+            }
+            item {
+                Text(
+                    "Precios orientativos. Algunos servicios cambian tarifas por promociones, impuestos, tiendas de apps o proveedores externos.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+                )
+            }
         }
     }
 }

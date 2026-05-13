@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -40,9 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,100 +58,104 @@ fun SubscriptionCatalogScreen(
 ) {
     var selectedCategory by remember { mutableStateOf("all") }
     var query by remember { mutableStateOf("") }
-    val categories = remember {
-        listOf(
-            CatalogCategory("all", "Todas", "Streaming", "Servicios"),
-            CatalogCategory("streaming", "Streaming", "Streaming", "14 servicios"),
-            CatalogCategory("music", "Música", "Música", "6 servicios"),
-            CatalogCategory("cloud", "Nube", "Nube", "6 servicios"),
-            CatalogCategory("gaming", "Gaming", "Gaming", "5 servicios"),
-            CatalogCategory("shopping", "Compras", "Compras", "5 servicios"),
-            CatalogCategory("ai", "IA", "IA", "5 servicios")
-        )
+    val categories = remember(PopularSubscriptionTemplates.size, SubscriptionCategories.size) {
+        listOf(CatalogCategory("all", "Todas", "Todas")) +
+            SubscriptionCategories.map { category ->
+                CatalogCategory(category.id, category.title, category.title)
+            }
     }
-    val visibleServices = remember(selectedCategory, query) {
-        val base = when (selectedCategory) {
-            "all" -> featuredCatalogServices()
-            "streaming" -> featuredStreamingServices()
-            else -> templatesForCategory(selectedCategory)
+    val selectedBaseServices = remember(selectedCategory) {
+        if (selectedCategory == "all") {
+            PopularSubscriptionTemplates
+        } else {
+            templatesForCategory(selectedCategory)
+        }
+    }
+    val visibleServices = remember(selectedCategory, selectedBaseServices, query) {
+        val base = if (selectedCategory == "all") {
+            selectedBaseServices.sortedWith(
+                compareBy<SubscriptionTemplate> { it.categoryId }.thenBy { it.name }
+            )
+        } else {
+            selectedBaseServices
         }
         base.filter { query.isBlank() || it.name.contains(query, ignoreCase = true) }
     }
     val selectedMeta = categories.first { it.id == selectedCategory }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(start = ScreenSidePadding, top = 38.dp, end = ScreenSidePadding, bottom = 22.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
-        item {
-            CatalogHeader(onBackClick = onBackClick)
-        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = ScreenSidePadding, top = 38.dp, end = ScreenSidePadding, bottom = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            item {
+                CatalogHeader(onBackClick = onBackClick)
+            }
 
-        item {
-            SearchField(
-                value = query,
-                onValueChange = { query = it }
-            )
-        }
-
-        item {
-            ManualSubscriptionCard(onClick = onManualClick)
-        }
-
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Eyebrow(
-                    "CATEGORÍAS"
+            item {
+                SearchField(
+                    value = query,
+                    onValueChange = { query = it }
                 )
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(horizontal = 0.dp)
-                ) {
-                    items(categories, key = { it.id }) { category ->
-                        CategoryPill(
-                            label = category.label,
-                            selected = selectedCategory == category.id,
-                            onClick = { selectedCategory = category.id }
-                        )
+            }
+
+            item {
+                ManualSubscriptionCard(onClick = onManualClick)
+            }
+
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Eyebrow("CATEGOR\u00cdAS")
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        contentPadding = PaddingValues(horizontal = 0.dp)
+                    ) {
+                        items(categories, key = { it.id }) { category ->
+                            CategoryPill(
+                                label = category.label,
+                                selected = selectedCategory == category.id,
+                                onClick = { selectedCategory = category.id }
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(selectedMeta.title, style = MaterialTheme.typography.titleMedium)
-                Text(
-                    if (selectedCategory == "all") "${visibleServices.size} servicios" else selectedMeta.countLabel,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        visibleServices.chunked(2).forEach { row ->
             item {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    row.forEach { service ->
-                        ServiceCatalogCard(
-                            service = service,
-                            onClick = { onServiceSelected(service.id) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    if (row.size == 1) {
-                        Spacer(modifier = Modifier.weight(1f))
+                    Text(selectedMeta.title, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        countLabel(visibleServices.size, selectedBaseServices.size, query),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            visibleServices.chunked(2).forEach { row ->
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        row.forEach { service ->
+                            ServiceCatalogCard(
+                                service = service,
+                                onClick = { onServiceSelected(service.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        if (row.size == 1) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
                 }
             }
@@ -226,8 +226,9 @@ private fun ManualSubscriptionCard(onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.24f))
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 14.dp),
@@ -237,20 +238,19 @@ private fun ManualSubscriptionCard(onClick: () -> Unit) {
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                color = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(20.dp))
                 }
             }
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text("¿No la encuentras?", style = MaterialTheme.typography.titleSmall)
+                Text("\u00bfNo la encuentras?", style = MaterialTheme.typography.titleSmall)
                 Text(
-                    "Crea una suscripción a mano",
+                    "Crea una suscripci\u00f3n a mano",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f)
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -358,19 +358,15 @@ private fun PlanCountPill(count: Int) {
 private data class CatalogCategory(
     val id: String,
     val label: String,
-    val title: String,
-    val countLabel: String
+    val title: String
 )
 
-private fun featuredCatalogServices(): List<SubscriptionTemplate> {
-    val ids = listOf("netflix", "spotify", "disney", "max", "chatgpt", "icloud", "prime-video", "youtube-premium")
-    return ids.mapNotNull(::findSubscriptionTemplate)
-}
-
-private fun featuredStreamingServices(): List<SubscriptionTemplate> {
-    val ids = listOf("netflix", "spotify", "disney", "max", "chatgpt", "icloud") +
-        templatesForCategory("streaming").map { it.id }.filterNot { it in setOf("netflix", "disney", "max") }
-    return ids.distinct().mapNotNull(::findSubscriptionTemplate)
+private fun countLabel(visibleCount: Int, totalCount: Int, query: String): String {
+    return if (query.isBlank() || visibleCount == totalCount) {
+        "$totalCount servicios"
+    } else {
+        "$visibleCount de $totalCount servicios"
+    }
 }
 
 private fun SubscriptionTemplate.displayName(): String {
@@ -383,7 +379,7 @@ private fun SubscriptionTemplate.displayName(): String {
 
 private fun SubscriptionTemplate.categoryLabel(): String {
     return when (id) {
-        "spotify" -> "Música"
+        "spotify" -> "M\u00fasica"
         "chatgpt" -> "IA"
         "icloud" -> "Nube"
         else -> SubscriptionCategories.firstOrNull { it.id == categoryId }?.title.orEmpty()
@@ -395,6 +391,6 @@ private fun SubscriptionTemplate.lowestPriceLabel(): String {
     return if (lowest == null || lowest == Double.MAX_VALUE) {
         "-"
     } else {
-        String.format(Locale.getDefault(), "€%.2f", lowest)
+        String.format(Locale.getDefault(), "\u20ac%.2f", lowest)
     }
 }
