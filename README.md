@@ -3,9 +3,8 @@
 App Android en Kotlin + Jetpack Compose para gestionar suscripciones periodicas.
 
 ## Estado actual
-- MVP funcional sin login y sin pagos reales.
-- CRUD completo de suscripciones.
-- Persistencia local con Room.
+- MVP funcional con backend Spring Boot + JWT.
+- CRUD completo de suscripciones via API REST.
 - Recordatorios locales con WorkManager y notificaciones.
 - Validaciones de formulario.
 - Tests base (DAO y ViewModel).
@@ -21,6 +20,13 @@ App Android en Kotlin + Jetpack Compose para gestionar suscripciones periodicas.
 3. Esperar la sincronizacion de Gradle.
 4. Si Android Studio pide crear/actualizar Gradle Wrapper, aceptar.
 5. Ejecutar en emulador o dispositivo (`Run app`).
+
+## Backend Spring Boot
+1. Abrir terminal en `backend/`.
+2. Tener MySQL corriendo (el backend crea la BD `paymember` si no existe).
+3. Ejecutar `mvn spring-boot:run`.
+3. La API queda en `http://localhost:8080`.
+4. En emulador Android, la app usa `http://10.0.2.2:8080`.
 
 ## Notificaciones
 - En Android 13+ la app pedira permiso de notificaciones al iniciar.
