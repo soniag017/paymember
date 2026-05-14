@@ -61,6 +61,7 @@ import com.paymember.ui.theme.Rose
 import com.paymember.ui.theme.Sky
 import java.time.LocalDate
 import java.time.Month
+import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -396,7 +397,7 @@ private fun UpcomingStrip(
             SectionCard { Text("Añade una suscripción para ver tus próximos cargos.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         } else {
             val upcoming = subscriptions
-                .sortedWith(compareBy<SubscriptionEntity> { nextChargeDate(it.billingDay) }.thenBy { it.serviceName })
+                .sortedWith(compareBy<SubscriptionEntity> { nextChargeDate(it) }.thenBy { it.serviceName })
                 .take(8)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(upcoming, key = { it.id }) { item ->
@@ -409,7 +410,7 @@ private fun UpcomingStrip(
 
 @Composable
 private fun UpcomingCard(item: SubscriptionEntity) {
-    val nextCharge = nextChargeDate(item.billingDay)
+    val nextCharge = nextChargeDate(item)
     val month = nextCharge.month.getDisplayName(TextStyle.SHORT, Locale("es", "ES")).uppercase(Locale("es", "ES"))
 
     SectionCard(modifier = Modifier.width(96.dp), padding = PaddingValues(12.dp)) {
@@ -469,7 +470,7 @@ private fun SubscriptionItem(
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(formatMoney(item.price), style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"))
-                Text("/MES", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(if (item.period == BillingPeriod.MONTHLY) "/MES" else "/A\u00d1O", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 IconButton(onClick = onDeleteClick, modifier = Modifier.size(28.dp)) {
                     Icon(Icons.Default.Delete, contentDescription = "Eliminar", modifier = Modifier.size(18.dp))
                 }
@@ -482,14 +483,25 @@ private fun SubscriptionEntity.monthlyEquivalent(): Double {
     return if (period == BillingPeriod.MONTHLY) price else price / 12.0
 }
 
-private fun nextChargeDate(billingDay: Int): LocalDate {
+private fun nextChargeDate(item: SubscriptionEntity): LocalDate {
     val today = LocalDate.now()
-    val safeDay = billingDay.coerceIn(1, 31)
-    val thisMonthDate = today.withDayOfMonth(safeDay.coerceAtMost(today.lengthOfMonth()))
-    if (!thisMonthDate.isBefore(today)) return thisMonthDate
+    val safeDay = item.billingDay.coerceIn(1, 31)
 
-    val nextMonth = today.plusMonths(1)
-    return nextMonth.withDayOfMonth(safeDay.coerceAtMost(nextMonth.lengthOfMonth()))
+    if (item.period == BillingPeriod.MONTHLY) {
+        val thisMonthDate = today.withDayOfMonth(safeDay.coerceAtMost(today.lengthOfMonth()))
+        if (!thisMonthDate.isBefore(today)) return thisMonthDate
+
+        val nextMonth = today.plusMonths(1)
+        return nextMonth.withDayOfMonth(safeDay.coerceAtMost(nextMonth.lengthOfMonth()))
+    }
+
+    val annualMonth = today.month
+    val thisYearMonth = YearMonth.of(today.year, annualMonth)
+    val thisYearDate = thisYearMonth.atDay(safeDay.coerceAtMost(thisYearMonth.lengthOfMonth()))
+    if (!thisYearDate.isBefore(today)) return thisYearDate
+
+    val nextYearMonth = YearMonth.of(today.year + 1, annualMonth)
+    return nextYearMonth.atDay(safeDay.coerceAtMost(nextYearMonth.lengthOfMonth()))
 }
 
 private fun SubscriptionEntity.cleanName(): String = serviceName.substringBefore(" - ").ifBlank { serviceName }

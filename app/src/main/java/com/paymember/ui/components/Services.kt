@@ -75,7 +75,25 @@ object Services {
         "ubisoft-plus" to ServiceBrand("ubisoft-plus", Color(0xFF101010), Color.White, "U", R.drawable.svc_ubisoft_plus),
         "roblox-premium" to ServiceBrand("roblox-premium", Color(0xFF101010), Color.White, "R", R.drawable.svc_roblox_premium),
         "fortnite-crew" to ServiceBrand("fortnite-crew", Color(0xFF21163D), Color(0xFFB5AEE6), "F", R.drawable.svc_fortnite_crew),
-        "humble-choice" to ServiceBrand("humble-choice", Color(0xFF101010), Color(0xFFE8916B), "H", R.drawable.svc_humble_choice)
+        "humble-choice" to ServiceBrand("humble-choice", Color(0xFF101010), Color(0xFFE8916B), "H", R.drawable.svc_humble_choice),
+        "el-pais" to ServiceBrand("el-pais", Color(0xFF0B4F8A), Color.White, "EP", R.drawable.svc_el_pais),
+        "el-mundo" to ServiceBrand("el-mundo", Color(0xFF062F5F), Color.White, "EM", R.drawable.svc_el_mundo),
+        "eldiario" to ServiceBrand("eldiario", Color(0xFF2A1010), Color(0xFFE8916B), "d", R.drawable.svc_eldiario),
+        "la-vanguardia" to ServiceBrand("la-vanguardia", Color(0xFF172B66), Color.White, "LV", R.drawable.svc_la_vanguardia),
+        "abc-premium" to ServiceBrand("abc-premium", Color(0xFF101010), Color.White, "ABC", R.drawable.svc_abc_premium),
+        "el-espanol" to ServiceBrand("el-espanol", Color(0xFF2A1010), Color(0xFFE8916B), "EE", R.drawable.svc_el_espanol),
+        "washington-post" to ServiceBrand("washington-post", Color(0xFF101010), Color.White, "WP", R.drawable.svc_washington_post),
+        "medium" to ServiceBrand("medium", Color(0xFF101010), Color.White, "M", R.drawable.svc_medium),
+        "readly" to ServiceBrand("readly", Color(0xFF08261A), Color(0xFF9CB87A), "R", R.drawable.svc_readly),
+        "kindle-unlimited" to ServiceBrand("kindle-unlimited", Color(0xFF07303A), Color(0xFFA6C6E8), "KU", R.drawable.svc_kindle_unlimited),
+        "ynab" to ServiceBrand("ynab", Color(0xFF062B2B), Color(0xFFA6C6E8), "Y", R.drawable.svc_ynab),
+        "tradingview" to ServiceBrand("tradingview", Color(0xFF0B1B3E), Color(0xFFA6C6E8), "TV", R.drawable.svc_tradingview),
+        "revolut" to ServiceBrand("revolut", Color(0xFF0B0F45), Color.White, "R", R.drawable.svc_revolut),
+        "n26" to ServiceBrand("n26", Color(0xFF06251E), Color(0xFF9CB87A), "N26", R.drawable.svc_n26),
+        "notion" to ServiceBrand("notion", Color(0xFF101010), Color.White, "N", R.drawable.svc_notion),
+        "figma" to ServiceBrand("figma", Color(0xFF101010), Color.White, "F", R.drawable.svc_figma),
+        "slack" to ServiceBrand("slack", Color(0xFF2A102B), Color(0xFFE4B5C5), "SL", R.drawable.svc_slack),
+        "setapp" to ServiceBrand("setapp", Color(0xFF06251E), Color(0xFF9CB87A), "SA", R.drawable.svc_setapp)
     )
 
     fun brandFor(id: String): ServiceBrand = brands[id] ?: fallback.copy(mark = id.take(2).uppercase())

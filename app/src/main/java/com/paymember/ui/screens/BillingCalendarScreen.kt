@@ -55,9 +55,9 @@ fun BillingCalendarScreen(
     var visibleMonth by remember { mutableStateOf(YearMonth.now()) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val chargesByDay = remember(subscriptions, visibleMonth) {
-        subscriptions.groupBy { item ->
-            item.billingDay.coerceIn(1, visibleMonth.lengthOfMonth())
-        }
+        subscriptions
+            .mapNotNull { item -> chargeDateForMonth(item, visibleMonth)?.let { date -> date.dayOfMonth to item } }
+            .groupBy({ it.first }, { it.second })
     }
     val selectedCharges = chargesByDay[selectedDate.dayOfMonth].orEmpty()
 
@@ -79,12 +79,14 @@ fun BillingCalendarScreen(
                 MonthSelector(
                     month = visibleMonth,
                     onPrevious = {
-                        visibleMonth = visibleMonth.minusMonths(1)
-                        selectedDate = visibleMonth.atDay(selectedDate.dayOfMonth.coerceAtMost(visibleMonth.lengthOfMonth()))
+                        val newMonth = visibleMonth.minusMonths(1)
+                        visibleMonth = newMonth
+                        selectedDate = newMonth.atDay(selectedDate.dayOfMonth.coerceAtMost(newMonth.lengthOfMonth()))
                     },
                     onNext = {
-                        visibleMonth = visibleMonth.plusMonths(1)
-                        selectedDate = visibleMonth.atDay(selectedDate.dayOfMonth.coerceAtMost(visibleMonth.lengthOfMonth()))
+                        val newMonth = visibleMonth.plusMonths(1)
+                        visibleMonth = newMonth
+                        selectedDate = newMonth.atDay(selectedDate.dayOfMonth.coerceAtMost(newMonth.lengthOfMonth()))
                     }
                 )
             }
@@ -336,9 +338,15 @@ private fun ChargeRow(item: SubscriptionEntity) {
         }
         Column(horizontalAlignment = Alignment.End) {
             Text(formatMoney(item.price), style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"))
-            Text(if (item.period == BillingPeriod.MONTHLY) "/MES" else "/ANIO", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(if (item.period == BillingPeriod.MONTHLY) "/MES" else "/A\u00d1O", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
+}
+
+private fun chargeDateForMonth(item: SubscriptionEntity, month: YearMonth): LocalDate? {
+    val safeDay = item.billingDay.coerceIn(1, 31)
+    if (item.period == BillingPeriod.YEARLY && month.month != LocalDate.now().month) return null
+    return month.atDay(safeDay.coerceAtMost(month.lengthOfMonth()))
 }
 
 private fun YearMonth.monthName(): String {

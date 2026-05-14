@@ -32,8 +32,10 @@ data class SubscriptionPlanTemplate(
 val SubscriptionCategories = listOf(
     SubscriptionCategoryTemplate("streaming", "Streaming", "Video, cine, series, anime y deporte"),
     SubscriptionCategoryTemplate("music", "Musica y audio", "Musica, podcasts, audiolibros y YouTube"),
+    SubscriptionCategoryTemplate("news", "Noticias y lectura", "Periodicos digitales, revistas y lectura online"),
     SubscriptionCategoryTemplate("shopping", "Compras y entregas", "Envios, comida a domicilio y supermercados"),
     SubscriptionCategoryTemplate("cloud", "Nube y productividad", "Almacenamiento, ofimatica y herramientas creativas"),
+    SubscriptionCategoryTemplate("finance", "Finanzas", "Presupuesto, banca premium, bolsa y datos de mercado"),
     SubscriptionCategoryTemplate("gaming", "Gaming", "Catalogos de juegos, online y juego en la nube"),
     SubscriptionCategoryTemplate("ai", "IA y asistentes", "Asistentes, busqueda y herramientas con IA"),
     SubscriptionCategoryTemplate("learning", "Aprendizaje", "Idiomas, cursos y formacion online"),
@@ -414,6 +416,55 @@ val PopularSubscriptionTemplates = listOf(
         )
     ),
     service(
+        id = "notion",
+        name = "Notion",
+        logoText = "N",
+        categoryId = "cloud",
+        accentColor = Color(0xFF111111),
+        summary = "Workspace para documentos, proyectos, bases de datos, calendario e IA.",
+        plans = listOf(
+            plan("plus", "Plus", "9.50", "EUR", BillingPeriod.MONTHLY, "Equipos pequenos", "Bloques ilimitados", "Subidas ilimitadas"),
+            plan("business", "Business", "19.50", "EUR", BillingPeriod.MONTHLY, "Agentes e IA", "SSO SAML", "Permisos avanzados")
+        )
+    ),
+    service(
+        id = "figma",
+        name = "Figma",
+        logoText = "F",
+        categoryId = "cloud",
+        accentColor = Color(0xFF0ACF83),
+        summary = "Diseno, prototipos, FigJam, Dev Mode y herramientas de producto.",
+        plans = listOf(
+            plan("full", "Professional Full seat", "16.00", "USD", BillingPeriod.MONTHLY, "Archivos ilimitados", "Librerias compartidas", "IA incluida"),
+            plan("dev", "Professional Dev seat", "12.00", "USD", BillingPeriod.MONTHLY, "Dev Mode", "Inspeccion avanzada", "MCP Server"),
+            plan("collab", "Professional Collab", "3.00", "USD", BillingPeriod.MONTHLY, "Comentarios", "Trabajo colaborativo", "AI credits")
+        )
+    ),
+    service(
+        id = "slack",
+        name = "Slack",
+        logoText = "SL",
+        categoryId = "cloud",
+        accentColor = Color(0xFF4A154B),
+        summary = "Mensajeria de equipos, historial completo, llamadas y automatizaciones.",
+        plans = listOf(
+            plan("pro", "Pro anual", "87.00", "USD", BillingPeriod.YEARLY, "7.25 USD/mes facturado anual", "Historial completo", "Huddles y workflows"),
+            plan("pro-monthly", "Pro mensual", "8.75", "USD", BillingPeriod.MONTHLY, "Pago mensual", "Historial completo", "Slack Connect")
+        )
+    ),
+    service(
+        id = "setapp",
+        name = "Setapp",
+        logoText = "SA",
+        categoryId = "cloud",
+        accentColor = Color(0xFF00A86B),
+        summary = "Coleccion de apps para Mac e iOS con una sola suscripcion.",
+        plans = listOf(
+            plan("personal", "Personal", "9.99", "USD", BillingPeriod.MONTHLY, "260+ apps", "Mac", "Prueba gratuita"),
+            plan("power-user", "Power User", "12.49", "USD", BillingPeriod.MONTHLY, "Mac + iOS", "Mas dispositivos", "Apps premium")
+        )
+    ),
+    service(
         id = "playstation-plus",
         name = "PlayStation Plus",
         logoText = "PS+",
@@ -626,6 +677,125 @@ val PopularSubscriptionTemplates = listOf(
         )
     ),
     service(
+        id = "el-pais",
+        name = "EL PAIS",
+        logoText = "EP",
+        categoryId = "news",
+        accentColor = Color(0xFF0B4F8A),
+        summary = "Periodismo generalista, opinion, analisis, cultura y newsletters.",
+        plans = listOf(
+            plan("digital", "Digital mensual", "10.00", "Acceso ilimitado", "App y web", "Sin permanencia"),
+            plan("digital-yearly", "Digital anual", "96.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Precio orientativo", "Acceso digital")
+        )
+    ),
+    service(
+        id = "el-mundo",
+        name = "El Mundo",
+        logoText = "EM",
+        categoryId = "news",
+        accentColor = Color(0xFF0069B4),
+        summary = "Noticias, opinion, hemeroteca, edicion digital y ventajas del Club.",
+        plans = listOf(
+            plan("digital", "Digital", "7.99", "Web y app", "Hemeroteca", "Club El Mundo"),
+            plan("premium", "Premium L-D", "39.00", "Acceso premium", "Edicion de lunes a domingo", "Primer mes segun oferta")
+        )
+    ),
+    service(
+        id = "eldiario",
+        name = "elDiario.es",
+        logoText = "d",
+        categoryId = "news",
+        accentColor = Color(0xFFE33A32),
+        summary = "Comunidad de socios para apoyar periodismo independiente.",
+        plans = listOf(
+            plan("monthly", "Socio mensual", "8.00", "Cuota mensual", "Periodismo independiente", "Aportacion ampliable"),
+            plan("yearly", "Socio anual", "80.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Aportacion ampliable", "Renovacion automatica")
+        )
+    ),
+    service(
+        id = "la-vanguardia",
+        name = "La Vanguardia",
+        logoText = "LV",
+        categoryId = "news",
+        accentColor = Color(0xFF172B66),
+        summary = "Acceso ilimitado, e-paper, suplementos, podcasts y Club Vanguardia.",
+        plans = listOf(
+            plan("digital", "Digital mensual", "7.99", "Web y app", "E-paper", "Club Vanguardia"),
+            plan("promo", "Promocion mensual", "3.00", "Primeros 12 meses", "Acceso ilimitado", "Sin permanencia")
+        )
+    ),
+    service(
+        id = "abc-premium",
+        name = "ABC Premium",
+        logoText = "ABC",
+        categoryId = "news",
+        accentColor = Color(0xFF111111),
+        summary = "ABC.es sin limite, firmas de opinion, newsletters y Archivo ABC.",
+        plans = listOf(
+            plan("monthly", "Premium mensual", "9.99", "Acceso ilimitado", "Archivo ABC", "3 sesiones simultaneas"),
+            plan("yearly", "Premium anual", "99.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Dos meses de ahorro", "Archivo y opinion")
+        )
+    ),
+    service(
+        id = "el-espanol",
+        name = "EL ESPANOL",
+        logoText = "EE",
+        categoryId = "news",
+        accentColor = Color(0xFFE11B22),
+        summary = "Diario digital con actualidad, opinion, economia e Invertia.",
+        plans = listOf(
+            plan("monthly", "Mensual", "6.99", "Acceso digital", "Actualidad y opinion", "Cancela cuando quieras"),
+            plan("yearly", "Un ano", "59.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Acceso digital", "Regalo disponible")
+        )
+    ),
+    service(
+        id = "washington-post",
+        name = "The Washington Post",
+        logoText = "WP",
+        categoryId = "news",
+        accentColor = Color(0xFF111111),
+        summary = "Noticias internacionales, politica, directos y reportajes interactivos.",
+        plans = listOf(
+            plan("core", "Core mensual", "8.00", "EUR", BillingPeriod.MONTHLY, "Acceso ilimitado", "Web y apps", "Precio base cada 4 semanas"),
+            plan("core-yearly", "Core anual", "80.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Acceso ilimitado", "Renovacion anual"),
+            plan("premium", "Premium+ mensual", "11.00", "EUR", BillingPeriod.MONTHLY, "Sin anuncios en web", "3 cuentas extra", "Pases digitales")
+        )
+    ),
+    service(
+        id = "medium",
+        name = "Medium",
+        logoText = "M",
+        categoryId = "news",
+        accentColor = Color(0xFF111111),
+        summary = "Articulos de autores, publicaciones independientes y lectura sin limites.",
+        plans = listOf(
+            plan("member", "Member", "5.00", "USD", BillingPeriod.MONTHLY, "Lectura ilimitada", "Apoya autores", "Audio y guardados"),
+            plan("member-yearly", "Member anual", "50.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Lectura ilimitada")
+        )
+    ),
+    service(
+        id = "readly",
+        name = "Readly",
+        logoText = "R",
+        categoryId = "news",
+        accentColor = Color(0xFF00A86B),
+        summary = "Revistas y periodicos digitales en una app con lectura offline.",
+        plans = listOf(
+            plan("premium", "Premium", "14.99", "Miles de revistas", "Modo offline", "Cancela cuando quieras")
+        )
+    ),
+    service(
+        id = "kindle-unlimited",
+        name = "Kindle Unlimited",
+        logoText = "KU",
+        categoryId = "news",
+        accentColor = Color(0xFF00A7CE),
+        summary = "Lectura digital con ebooks, comics y algunos audiolibros incluidos.",
+        plans = listOf(
+            plan("monthly", "Mensual", "9.99", "Lectura ilimitada", "Catalogo Kindle", "Prueba segun promocion")
+        )
+    ),
+    service(
         id = "duolingo",
         name = "Super Duolingo",
         logoText = "D",
@@ -737,6 +907,58 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("individual", "Individual", "2.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Apps ilimitadas", "1 GB documentos"),
             plan("families", "Families", "4.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Hasta 5 personas", "Cuentas familiares")
+        )
+    ),
+    service(
+        id = "ynab",
+        name = "YNAB",
+        logoText = "Y",
+        categoryId = "finance",
+        accentColor = Color(0xFF00A6A6),
+        summary = "Presupuesto personal y familiar con metodo de sobres y sincronizacion.",
+        plans = listOf(
+            plan("monthly", "Mensual", "14.99", "USD", BillingPeriod.MONTHLY, "Presupuesto completo", "Compartido hasta 6", "34 dias gratis"),
+            plan("yearly", "Anual", "109.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "YNAB Together")
+        )
+    ),
+    service(
+        id = "tradingview",
+        name = "TradingView",
+        logoText = "TV",
+        categoryId = "finance",
+        accentColor = Color(0xFF2962FF),
+        summary = "Graficos financieros, alertas, indicadores y datos de mercado.",
+        plans = listOf(
+            plan("essential-yearly", "Essential anual", "155.40", "EUR", BillingPeriod.YEARLY, "2 graficos por pestana", "20 alertas", "Facturado anualmente"),
+            plan("plus-yearly", "Plus anual", "359.40", "EUR", BillingPeriod.YEARLY, "4 graficos por pestana", "100 alertas", "Facturado anualmente"),
+            plan("premium-yearly", "Premium anual", "719.40", "EUR", BillingPeriod.YEARLY, "8 graficos por pestana", "400 alertas", "Soporte prioritario")
+        )
+    ),
+    service(
+        id = "revolut",
+        name = "Revolut",
+        logoText = "R",
+        categoryId = "finance",
+        accentColor = Color(0xFF191CFF),
+        summary = "Cuenta digital con planes de pago, viajes, seguros y beneficios.",
+        plans = listOf(
+            plan("plus", "Plus", "3.99", "EUR", BillingPeriod.MONTHLY, "Tarjeta Plus", "Beneficios basicos", "Plan de 12 meses"),
+            plan("premium", "Premium", "8.99", "EUR", BillingPeriod.MONTHLY, "Seguro de viaje", "RevPoints", "Atencion prioritaria"),
+            plan("metal", "Metal", "15.99", "EUR", BillingPeriod.MONTHLY, "Tarjeta Metal", "Cashback y seguros", "Beneficios premium"),
+            plan("metal-yearly", "Metal anual", "155.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismos beneficios Metal")
+        )
+    ),
+    service(
+        id = "n26",
+        name = "N26",
+        logoText = "N26",
+        categoryId = "finance",
+        accentColor = Color(0xFF48AC98),
+        summary = "Banco digital con cuentas premium, espacios, seguros y ventajas de viaje.",
+        plans = listOf(
+            plan("smart", "Smart", "4.90", "EUR", BillingPeriod.MONTHLY, "Subcuentas Spaces", "Tarjetas virtuales", "Personalizacion"),
+            plan("go", "Go", "9.90", "EUR", BillingPeriod.MONTHLY, "Viajes", "Cashback", "Seguro de viaje"),
+            plan("metal", "Metal", "16.90", "EUR", BillingPeriod.MONTHLY, "Tarjeta metal", "Seguro movil", "Proteccion de compras")
         )
     ),
     service(
