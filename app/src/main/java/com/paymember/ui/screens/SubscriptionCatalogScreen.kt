@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.paymember.data.model.BillingPeriod
 import com.paymember.ui.components.Eyebrow
 import com.paymember.ui.components.SectionCard
 import com.paymember.ui.components.ServiceLogo
@@ -387,10 +388,15 @@ private fun SubscriptionTemplate.categoryLabel(): String {
 }
 
 private fun SubscriptionTemplate.lowestPriceLabel(): String {
-    val lowest = plans.minOfOrNull { it.price.replace(',', '.').toDoubleOrNull() ?: Double.MAX_VALUE }
+    val lowest = plans.minOfOrNull { it.monthlyEquivalentPrice() ?: Double.MAX_VALUE }
     return if (lowest == null || lowest == Double.MAX_VALUE) {
         "-"
     } else {
         String.format(Locale.getDefault(), "\u20ac%.2f", lowest)
     }
+}
+
+private fun SubscriptionPlanTemplate.monthlyEquivalentPrice(): Double? {
+    val value = price.replace(',', '.').toDoubleOrNull() ?: return null
+    return if (period == BillingPeriod.YEARLY) value / 12.0 else value
 }

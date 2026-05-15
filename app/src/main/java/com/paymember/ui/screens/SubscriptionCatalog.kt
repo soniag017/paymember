@@ -79,8 +79,11 @@ val PopularSubscriptionTemplates = listOf(
         summary = "HBO, Warner, Discovery y deportes opcionales.",
         plans = listOf(
             plan("ads", "Basico con anuncios", "6.99", "Full HD", "2 dispositivos", "Con publicidad"),
+            plan("ads-yearly", "Basico con anuncios anual", "69.90", "EUR", BillingPeriod.YEARLY, "Pago anual", "Full HD", "Con publicidad"),
             plan("standard", "Estandar", "10.99", "Full HD", "2 dispositivos", "30 descargas"),
+            plan("standard-yearly", "Estandar anual", "109.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Full HD", "30 descargas"),
             plan("premium", "Premium", "15.99", "4K UHD", "4 dispositivos", "100 descargas"),
+            plan("premium-yearly", "Premium anual", "159.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "4K UHD", "100 descargas"),
             plan("dazn", "Max DAZN", "44.99", "Max Premium", "DAZN incluido", "Sin plan anual")
         )
     ),
@@ -94,7 +97,9 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("ads", "Estandar con anuncios", "6.99", "Full HD", "2 dispositivos", "Con publicidad"),
             plan("standard", "Estandar", "10.99", "Full HD", "2 dispositivos", "Descargas"),
-            plan("premium", "Premium", "15.99", "4K UHD y HDR", "4 dispositivos", "Dolby Atmos")
+            plan("standard-yearly", "Estandar anual", "109.90", "EUR", BillingPeriod.YEARLY, "Pago anual", "Full HD", "Descargas"),
+            plan("premium", "Premium", "15.99", "4K UHD y HDR", "4 dispositivos", "Dolby Atmos"),
+            plan("premium-yearly", "Premium anual", "159.90", "EUR", BillingPeriod.YEARLY, "Pago anual", "4K UHD y HDR", "Dolby Atmos")
         )
     ),
     service(
@@ -130,7 +135,7 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF6C2BD9),
         summary = "Universal, Paramount, DreamWorks, Sky y Showtime.",
         plans = listOf(
-            plan("ads", "Estandar con anuncios", "4.49", "Precio equivalente semestral", "Con anuncios", "Full HD"),
+            plan("ads-yearly", "Estandar con anuncios anual", "47.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Con anuncios", "Equivale a 3,99 EUR/mes"),
             plan("standard", "Estandar", "6.99", "Sin anuncios", "Full HD", "2 dispositivos"),
             plan("premium", "Premium", "10.00", "Mas calidad", "Mas dispositivos", "Descargas")
         )
@@ -155,9 +160,11 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Deporte en directo y bajo demanda, segun derechos disponibles.",
         plans = listOf(
-            plan("victoria", "Victoria", "9.99", "Futbol femenino", "Documentales", "Contenido DAZN"),
-            plan("esencial", "Esencial", "19.99", "Motor y deportes", "F1 y MotoGP segun temporada", "Sin futbol completo"),
-            plan("total", "Total", "39.99", "Mas competiciones", "Futbol y motor", "Plan mas completo")
+            plan("made-usa", "Made in USA", "7.99", "NFL, NBA y deportes USA", "2 dispositivos", "Cancela con 30 dias"),
+            plan("basket", "Baloncesto", "14.99", "Baloncesto", "2 dispositivos", "Cancela con 30 dias"),
+            plan("motor", "Motor", "29.99", "F1 y MotoGP", "2 dispositivos", "Cancela con 30 dias"),
+            plan("football", "Futbol", "29.99", "Futbol seleccionado", "2 dispositivos", "Cancela con 30 dias"),
+            plan("premium", "Premium", "44.99", "Todo DAZN", "2 dispositivos", "Plan mas completo")
         )
     ),
     service(
@@ -345,7 +352,11 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Almacenamiento para Google Fotos, Drive y Gmail.",
         plans = listOf(
             plan("basic", "Basic 100 GB", "1.99", "100 GB", "Compartible con 5 personas", "Google Fotos, Drive y Gmail"),
+            plan("basic-yearly", "Basic 100 GB anual", "19.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "100 GB", "Compartible en familia"),
+            plan("standard", "Standard 200 GB", "2.99", "200 GB", "Compartible con 5 personas", "Google Fotos, Drive y Gmail"),
+            plan("standard-yearly", "Standard 200 GB anual", "29.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "200 GB", "Compartible en familia"),
             plan("premium", "Premium 2 TB", "9.99", "2 TB", "Ventajas premium", "Compartible en familia"),
+            plan("premium-yearly", "Premium 2 TB anual", "99.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "2 TB", "Ventajas premium"),
             plan("ai-pro", "Google AI Pro 2 TB", "19.99", "Gemini incluido", "2 TB", "Funciones avanzadas de IA")
         )
     ),
@@ -373,8 +384,11 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Office, OneDrive, Outlook y funciones de Copilot segun plan.",
         plans = listOf(
             plan("basic", "Basico", "2.00", "100 GB", "Outlook", "Proteccion y almacenamiento"),
+            plan("basic-yearly", "Basico anual", "20.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "100 GB", "Outlook"),
             plan("personal", "Personal", "10.00", "1 TB", "Apps Office", "1 persona"),
-            plan("family", "Familia", "13.00", "Hasta 6 personas", "Hasta 6 TB", "Apps Office")
+            plan("personal-yearly", "Personal anual", "99.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "1 TB", "Apps Office"),
+            plan("family", "Familia", "13.00", "Hasta 6 personas", "Hasta 6 TB", "Apps Office"),
+            plan("family-yearly", "Familia anual", "129.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Hasta 6 personas", "Hasta 6 TB")
         )
     ),
     service(
@@ -385,9 +399,11 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF0061FF),
         summary = "Almacenamiento, sincronizacion, transferencias y firma.",
         plans = listOf(
-            plan("plus", "Plus", "9.99", "USD", BillingPeriod.MONTHLY, "2 TB", "1 persona", "Transferencias hasta 50 GB"),
-            plan("family", "Family", "16.99", "USD", BillingPeriod.MONTHLY, "Hasta 6 usuarios", "2 TB", "Carpeta familiar"),
-            plan("professional", "Professional", "16.58", "USD", BillingPeriod.MONTHLY, "3 TB", "Controles avanzados", "Transferencias hasta 100 GB")
+            plan("plus", "Plus anual", "119.88", "EUR", BillingPeriod.YEARLY, "9,99 EUR/mes facturado anual", "2 TB", "1 persona"),
+            plan("plus-monthly", "Plus mensual", "11.99", "EUR", BillingPeriod.MONTHLY, "Pago mensual", "2 TB", "1 persona"),
+            plan("family", "Family anual", "203.88", "EUR", BillingPeriod.YEARLY, "16,99 EUR/mes facturado anual", "Hasta 6 usuarios", "2 TB"),
+            plan("professional", "Professional anual", "198.96", "EUR", BillingPeriod.YEARLY, "16,58 EUR/mes facturado anual", "3 TB", "Controles avanzados"),
+            plan("professional-monthly", "Professional mensual", "19.99", "EUR", BillingPeriod.MONTHLY, "Pago mensual", "3 TB", "Transferencias hasta 100 GB")
         )
     ),
     service(
@@ -435,9 +451,9 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF0ACF83),
         summary = "Diseno, prototipos, FigJam, Dev Mode y herramientas de producto.",
         plans = listOf(
-            plan("full", "Professional Full seat", "16.00", "USD", BillingPeriod.MONTHLY, "Archivos ilimitados", "Librerias compartidas", "IA incluida"),
-            plan("dev", "Professional Dev seat", "12.00", "USD", BillingPeriod.MONTHLY, "Dev Mode", "Inspeccion avanzada", "MCP Server"),
-            plan("collab", "Professional Collab", "3.00", "USD", BillingPeriod.MONTHLY, "Comentarios", "Trabajo colaborativo", "AI credits")
+            plan("full", "Professional Full seat", "16.00", "EUR", BillingPeriod.MONTHLY, "Archivos ilimitados", "Librerias compartidas", "IA incluida"),
+            plan("dev", "Professional Dev seat", "12.00", "EUR", BillingPeriod.MONTHLY, "Dev Mode", "Inspeccion avanzada", "MCP Server"),
+            plan("collab", "Professional Collab", "3.00", "EUR", BillingPeriod.MONTHLY, "Comentarios", "Trabajo colaborativo", "AI credits")
         )
     ),
     service(
@@ -448,8 +464,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF4A154B),
         summary = "Mensajeria de equipos, historial completo, llamadas y automatizaciones.",
         plans = listOf(
-            plan("pro", "Pro anual", "87.00", "USD", BillingPeriod.YEARLY, "7.25 USD/mes facturado anual", "Historial completo", "Huddles y workflows"),
-            plan("pro-monthly", "Pro mensual", "8.75", "USD", BillingPeriod.MONTHLY, "Pago mensual", "Historial completo", "Slack Connect")
+            plan("pro", "Pro anual", "81.00", "EUR", BillingPeriod.YEARLY, "6,75 EUR/usuario/mes", "Facturado anualmente", "Historial completo"),
+            plan("business", "Business+ anual", "180.00", "EUR", BillingPeriod.YEARLY, "15 EUR/usuario/mes", "Facturado anualmente", "IA avanzada")
         )
     ),
     service(
@@ -460,8 +476,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF00A86B),
         summary = "Coleccion de apps para Mac e iOS con una sola suscripcion.",
         plans = listOf(
-            plan("personal", "Personal", "9.99", "USD", BillingPeriod.MONTHLY, "260+ apps", "Mac", "Prueba gratuita"),
-            plan("power-user", "Power User", "12.49", "USD", BillingPeriod.MONTHLY, "Mac + iOS", "Mas dispositivos", "Apps premium")
+            plan("personal", "Personal", "9.99", "EUR", BillingPeriod.MONTHLY, "260+ apps", "Mac", "Prueba gratuita"),
+            plan("power-user", "Power User", "12.49", "EUR", BillingPeriod.MONTHLY, "Mac + iOS", "Mas dispositivos", "Apps premium")
         )
     ),
     service(
@@ -473,8 +489,11 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Multijugador online, juegos mensuales y catalogos segun nivel.",
         plans = listOf(
             plan("essential", "Essential", "8.99", "Juegos mensuales", "Online", "Descuentos"),
+            plan("essential-yearly", "Essential anual", "71.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Juegos mensuales", "Online"),
             plan("extra", "Extra", "13.99", "Catalogo de juegos", "Ubisoft+ Classics", "Online"),
-            plan("premium", "Premium", "16.99", "Clasicos", "Pruebas", "Streaming en la nube")
+            plan("extra-yearly", "Extra anual", "125.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Catalogo de juegos", "Online"),
+            plan("premium", "Premium", "16.99", "Clasicos", "Pruebas", "Streaming en la nube"),
+            plan("premium-yearly", "Premium anual", "151.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Clasicos", "Streaming en la nube")
         )
     ),
     service(
@@ -485,9 +504,10 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF107C10),
         summary = "Catalogo de juegos para consola, PC y nube segun plan.",
         plans = listOf(
-            plan("pc", "PC Game Pass", "13.99", "EUR", BillingPeriod.MONTHLY, "Catalogo PC", "EA Play", "Juegos seleccionados"),
-            plan("premium", "Premium", "14.99", "EUR", BillingPeriod.MONTHLY, "Catalogo consola", "Online", "Sin lanzamientos dia 1 en todos los casos"),
-            plan("ultimate", "Ultimate", "19.99", "EUR", BillingPeriod.MONTHLY, "Consola, PC y nube", "EA Play", "Mas ventajas")
+            plan("essential", "Essential", "8.99", "EUR", BillingPeriod.MONTHLY, "Catalogo basico", "Online", "Ventajas en juegos"),
+            plan("pc", "PC Game Pass", "12.99", "EUR", BillingPeriod.MONTHLY, "Catalogo PC", "EA Play", "Juegos seleccionados"),
+            plan("premium", "Premium", "12.99", "EUR", BillingPeriod.MONTHLY, "Catalogo consola", "Online", "Sin lanzamientos dia 1 en todos los casos"),
+            plan("ultimate", "Ultimate", "20.99", "EUR", BillingPeriod.MONTHLY, "Consola, PC y nube", "EA Play", "Mas ventajas")
         )
     ),
     service(
@@ -500,7 +520,8 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("individual", "Individual anual", "19.99", "EUR", BillingPeriod.YEARLY, "Online", "Clasicos NES/SNES/Game Boy", "Guardado en la nube"),
             plan("family", "Familiar anual", "34.99", "EUR", BillingPeriod.YEARLY, "Hasta 8 cuentas", "Online", "Guardado en la nube"),
-            plan("expansion", "Expansion anual", "39.99", "EUR", BillingPeriod.YEARLY, "Nintendo 64 y Game Boy Advance", "DLCs seleccionados", "Online")
+            plan("expansion", "Expansion individual anual", "39.99", "EUR", BillingPeriod.YEARLY, "Nintendo 64 y Game Boy Advance", "DLCs seleccionados", "Online"),
+            plan("expansion-family", "Expansion familiar anual", "69.99", "EUR", BillingPeriod.YEARLY, "Hasta 8 cuentas", "DLCs seleccionados", "Online")
         )
     ),
     service(
@@ -525,7 +546,9 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Catalogo EA, pruebas anticipadas y descuentos.",
         plans = listOf(
             plan("standard", "EA Play", "5.99", "Catalogo EA", "Pruebas de juegos", "10% descuento"),
-            plan("pro", "EA Play Pro", "16.99", "Lanzamientos premium", "PC", "Recompensas")
+            plan("standard-yearly", "EA Play anual", "39.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Catalogo EA", "10% descuento"),
+            plan("pro", "EA Play Pro", "16.99", "Lanzamientos premium", "PC", "Recompensas"),
+            plan("pro-yearly", "EA Play Pro anual", "119.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Lanzamientos premium", "PC")
         )
     ),
     service(
@@ -536,8 +559,9 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF10A37F),
         summary = "Asistente de IA para texto, voz, imagen, analisis y automatizacion.",
         plans = listOf(
-            plan("plus", "Plus", "20.00", "USD", BillingPeriod.MONTHLY, "Limites ampliados", "Voz y archivos", "Modelos avanzados"),
-            plan("pro", "Pro", "200.00", "USD", BillingPeriod.MONTHLY, "Maximo acceso", "Investigacion profunda", "Funciones anticipadas")
+            plan("go", "Go", "9.99", "EUR", BillingPeriod.MONTHLY, "Mas uso que Free", "Archivos y voz con limites", "Plan economico en Espana"),
+            plan("plus", "Plus", "22.99", "EUR", BillingPeriod.MONTHLY, "Limites ampliados", "Voz y archivos", "Precio Espana con impuestos"),
+            plan("pro", "Pro", "229.00", "EUR", BillingPeriod.MONTHLY, "Maximo acceso", "Investigacion profunda", "Precio Espana con impuestos")
         )
     ),
     service(
@@ -548,9 +572,10 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFD97757),
         summary = "Asistente de Anthropic para escritura, analisis, codigo y documentos.",
         plans = listOf(
-            plan("pro", "Pro mensual", "20.00", "USD", BillingPeriod.MONTHLY, "Mas uso", "Proyectos", "Claude Code"),
-            plan("pro-yearly", "Pro anual", "200.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Descuento", "Mas uso"),
-            plan("max", "Max", "100.00", "USD", BillingPeriod.MONTHLY, "Mas limites", "Prioridad", "Funciones anticipadas")
+            plan("pro", "Pro mensual", "20.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Mas uso", "Claude Code"),
+            plan("pro-yearly", "Pro anual", "200.00", "EUR", BillingPeriod.YEARLY, "Precio global orientativo", "Pago anual", "Mas uso"),
+            plan("max", "Max 5x", "100.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Mas limites", "Prioridad"),
+            plan("max-20x", "Max 20x", "200.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Limites mas altos", "Funciones anticipadas")
         )
     ),
     service(
@@ -573,8 +598,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF20B8CD),
         summary = "Busqueda con IA, respuestas con fuentes y modelos avanzados.",
         plans = listOf(
-            plan("pro", "Pro", "20.00", "USD", BillingPeriod.MONTHLY, "Busquedas Pro", "Modelos avanzados", "Carga de archivos"),
-            plan("pro-yearly", "Pro anual", "200.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro", "Modelos avanzados")
+            plan("pro", "Pro", "20.00", "EUR", BillingPeriod.MONTHLY, "Busquedas Pro", "Modelos avanzados", "Carga de archivos"),
+            plan("pro-yearly", "Pro anual", "200.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro", "Modelos avanzados")
         )
     ),
     service(
@@ -585,7 +610,7 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "IA integrada en Notion para escribir, resumir y consultar espacios de trabajo.",
         plans = listOf(
-            plan("ai", "Notion AI", "10.00", "USD", BillingPeriod.MONTHLY, "Complemento IA", "Resumenes", "Preguntas sobre workspace")
+            plan("ai", "Notion AI", "10.00", "EUR", BillingPeriod.MONTHLY, "Complemento IA", "Resumenes", "Preguntas sobre workspace")
         )
     ),
     service(
@@ -672,8 +697,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Ebooks, audiolibros, revistas, podcasts y documentos seleccionados.",
         plans = listOf(
-            plan("monthly", "Mensual", "11.99", "USD", BillingPeriod.MONTHLY, "Lectura y audio", "Catalogo Everand", "Cancela cuando quieras"),
-            plan("yearly", "Anual", "119.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo Everand")
+            plan("monthly", "Mensual", "11.99", "EUR", BillingPeriod.MONTHLY, "Lectura y audio", "Catalogo Everand", "Cancela cuando quieras"),
+            plan("yearly", "Anual", "119.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo Everand")
         )
     ),
     service(
@@ -769,8 +794,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Articulos de autores, publicaciones independientes y lectura sin limites.",
         plans = listOf(
-            plan("member", "Member", "5.00", "USD", BillingPeriod.MONTHLY, "Lectura ilimitada", "Apoya autores", "Audio y guardados"),
-            plan("member-yearly", "Member anual", "50.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Lectura ilimitada")
+            plan("member", "Member", "5.00", "EUR", BillingPeriod.MONTHLY, "Lectura ilimitada", "Apoya autores", "Audio y guardados"),
+            plan("member-yearly", "Member anual", "50.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Lectura ilimitada")
         )
     ),
     service(
@@ -843,8 +868,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF2A73CC),
         summary = "Cursos y certificados profesionales de universidades y empresas.",
         plans = listOf(
-            plan("monthly", "Plus mensual", "59.00", "USD", BillingPeriod.MONTHLY, "Catalogo Plus", "Certificados", "Cancela cuando quieras"),
-            plan("yearly", "Plus anual", "399.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Certificados incluidos")
+            plan("monthly", "Plus mensual", "59.00", "EUR", BillingPeriod.MONTHLY, "Catalogo Plus", "Certificados", "Cancela cuando quieras"),
+            plan("yearly", "Plus anual", "399.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Certificados incluidos")
         )
     ),
     service(
@@ -856,8 +881,8 @@ val PopularSubscriptionTemplates = listOf(
         logoTextColor = Color(0xFF111111),
         summary = "Clases creativas online de diseno, foto, negocio y productividad.",
         plans = listOf(
-            plan("monthly", "Mensual", "29.00", "USD", BillingPeriod.MONTHLY, "Clases ilimitadas", "Proyectos", "Offline en app"),
-            plan("yearly", "Anual", "168.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Clases ilimitadas")
+            plan("monthly", "Mensual", "29.00", "EUR", BillingPeriod.MONTHLY, "Clases ilimitadas", "Proyectos", "Offline en app"),
+            plan("yearly", "Anual", "168.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Clases ilimitadas")
         )
     ),
     service(
@@ -868,9 +893,9 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFE74C3C),
         summary = "Clases online impartidas por expertos y creadores reconocidos.",
         plans = listOf(
-            plan("individual", "Individual anual", "120.00", "USD", BillingPeriod.YEARLY, "1 dispositivo", "Catalogo completo", "Pago anual"),
-            plan("duo", "Duo anual", "180.00", "USD", BillingPeriod.YEARLY, "2 dispositivos", "Descargas", "Pago anual"),
-            plan("family", "Family anual", "240.00", "USD", BillingPeriod.YEARLY, "6 dispositivos", "Descargas", "Pago anual")
+            plan("individual", "Individual anual", "120.00", "EUR", BillingPeriod.YEARLY, "1 dispositivo", "Catalogo completo", "Pago anual"),
+            plan("duo", "Duo anual", "180.00", "EUR", BillingPeriod.YEARLY, "2 dispositivos", "Descargas", "Pago anual"),
+            plan("family", "Family anual", "240.00", "EUR", BillingPeriod.YEARLY, "6 dispositivos", "Descargas", "Pago anual")
         )
     ),
     service(
@@ -905,8 +930,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF2368D5),
         summary = "Gestor de contrasenas, passkeys, tarjetas y secretos familiares.",
         plans = listOf(
-            plan("individual", "Individual", "2.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Apps ilimitadas", "1 GB documentos"),
-            plan("families", "Families", "4.99", "USD", BillingPeriod.MONTHLY, "Facturacion anual", "Hasta 5 personas", "Cuentas familiares")
+            plan("individual", "Individual", "2.99", "EUR", BillingPeriod.MONTHLY, "Facturacion anual", "Apps ilimitadas", "1 GB documentos"),
+            plan("families", "Families", "4.99", "EUR", BillingPeriod.MONTHLY, "Facturacion anual", "Hasta 5 personas", "Cuentas familiares")
         )
     ),
     service(
@@ -917,8 +942,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF00A6A6),
         summary = "Presupuesto personal y familiar con metodo de sobres y sincronizacion.",
         plans = listOf(
-            plan("monthly", "Mensual", "14.99", "USD", BillingPeriod.MONTHLY, "Presupuesto completo", "Compartido hasta 6", "34 dias gratis"),
-            plan("yearly", "Anual", "109.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "YNAB Together")
+            plan("monthly", "Mensual", "14.99", "EUR", BillingPeriod.MONTHLY, "Presupuesto completo", "Compartido hasta 6", "34 dias gratis"),
+            plan("yearly", "Anual", "109.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "YNAB Together")
         )
     ),
     service(
@@ -943,9 +968,13 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Cuenta digital con planes de pago, viajes, seguros y beneficios.",
         plans = listOf(
             plan("plus", "Plus", "3.99", "EUR", BillingPeriod.MONTHLY, "Tarjeta Plus", "Beneficios basicos", "Plan de 12 meses"),
+            plan("plus-yearly", "Plus anual", "39.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Tarjeta Plus", "Beneficios basicos"),
             plan("premium", "Premium", "8.99", "EUR", BillingPeriod.MONTHLY, "Seguro de viaje", "RevPoints", "Atencion prioritaria"),
+            plan("premium-yearly", "Premium anual", "90.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Seguro de viaje", "RevPoints"),
             plan("metal", "Metal", "15.99", "EUR", BillingPeriod.MONTHLY, "Tarjeta Metal", "Cashback y seguros", "Beneficios premium"),
-            plan("metal-yearly", "Metal anual", "155.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismos beneficios Metal")
+            plan("metal-yearly", "Metal anual", "155.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismos beneficios Metal"),
+            plan("ultra", "Ultra", "55.00", "EUR", BillingPeriod.MONTHLY, "Plan superior", "Viajes y beneficios ampliados", "Suscripcion mensual"),
+            plan("ultra-yearly", "Ultra anual", "540.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Plan superior", "Ahorro frente al mes")
         )
     ),
     service(
@@ -969,8 +998,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFE44332),
         summary = "Tareas, proyectos, filtros, recordatorios y calendario.",
         plans = listOf(
-            plan("pro", "Pro mensual", "5.00", "USD", BillingPeriod.MONTHLY, "Recordatorios", "Calendario", "Filtros"),
-            plan("pro-yearly", "Pro anual", "48.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
+            plan("pro", "Pro mensual", "5.00", "EUR", BillingPeriod.MONTHLY, "Recordatorios", "Calendario", "Filtros"),
+            plan("pro-yearly", "Pro anual", "48.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
         )
     ),
     service(
@@ -981,8 +1010,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Asistente de programacion integrado en IDEs y GitHub.",
         plans = listOf(
-            plan("pro", "Pro", "10.00", "USD", BillingPeriod.MONTHLY, "Completado de codigo", "Chat", "Modelos avanzados"),
-            plan("pro-plus", "Pro+", "39.00", "USD", BillingPeriod.MONTHLY, "Mas limites", "Modelos premium", "Funciones avanzadas")
+            plan("pro", "Pro", "10.00", "EUR", BillingPeriod.MONTHLY, "Completado de codigo", "Chat", "Modelos avanzados"),
+            plan("pro-plus", "Pro+", "39.00", "EUR", BillingPeriod.MONTHLY, "Mas limites", "Modelos premium", "Funciones avanzadas")
         )
     ),
     service(
@@ -993,8 +1022,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Editor de codigo con IA, agentes, autocompletado y contexto de repo.",
         plans = listOf(
-            plan("pro", "Pro", "20.00", "USD", BillingPeriod.MONTHLY, "Uso ampliado", "Agentes", "Autocompletado"),
-            plan("pro-yearly", "Pro anual", "192.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
+            plan("pro", "Pro", "20.00", "EUR", BillingPeriod.MONTHLY, "Uso ampliado", "Agentes", "Autocompletado"),
+            plan("pro-yearly", "Pro anual", "192.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
         )
     ),
     service(
@@ -1005,9 +1034,9 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Generacion de imagenes por IA con planes por tiempo GPU.",
         plans = listOf(
-            plan("basic", "Basic", "10.00", "USD", BillingPeriod.MONTHLY, "GPU limitada", "Galeria", "Uso personal"),
-            plan("standard", "Standard", "30.00", "USD", BillingPeriod.MONTHLY, "Mas GPU", "Relax mode", "Uso frecuente"),
-            plan("basic-yearly", "Basic anual", "96.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro", "GPU limitada")
+            plan("basic", "Basic", "10.00", "EUR", BillingPeriod.MONTHLY, "GPU limitada", "Galeria", "Uso personal"),
+            plan("standard", "Standard", "30.00", "EUR", BillingPeriod.MONTHLY, "Mas GPU", "Relax mode", "Uso frecuente"),
+            plan("basic-yearly", "Basic anual", "96.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro", "GPU limitada")
         )
     ),
     service(
@@ -1078,8 +1107,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFCC2929),
         summary = "Juegos PC mensuales, Humble Vault y descuentos en tienda.",
         plans = listOf(
-            plan("monthly", "Mensual", "11.99", "USD", BillingPeriod.MONTHLY, "Juegos mensuales", "Descuentos", "Cancela cuando quieras"),
-            plan("yearly", "Anual", "129.00", "USD", BillingPeriod.YEARLY, "Pago anual", "Juegos mensuales", "Ahorro frente al mes")
+            plan("monthly", "Mensual", "11.99", "EUR", BillingPeriod.MONTHLY, "Juegos mensuales", "Descuentos", "Cancela cuando quieras"),
+            plan("yearly", "Anual", "129.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Juegos mensuales", "Ahorro frente al mes")
         )
     ),
     service(
@@ -1102,8 +1131,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF2A73CC),
         summary = "Meditacion, sueno, musica relajante y programas guiados.",
         plans = listOf(
-            plan("monthly", "Mensual", "14.99", "USD", BillingPeriod.MONTHLY, "Meditaciones", "Sleep Stories", "Musica"),
-            plan("yearly", "Anual", "69.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
+            plan("monthly", "Mensual", "14.99", "EUR", BillingPeriod.MONTHLY, "Meditaciones", "Sleep Stories", "Musica"),
+            plan("yearly", "Anual", "69.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
         )
     ),
     service(
@@ -1114,8 +1143,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFFF7F32),
         summary = "Meditacion, mindfulness, foco, sueno y bienestar mental.",
         plans = listOf(
-            plan("monthly", "Mensual", "12.99", "USD", BillingPeriod.MONTHLY, "Meditaciones", "Sueno", "Cursos"),
-            plan("yearly", "Anual", "69.99", "USD", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
+            plan("monthly", "Mensual", "12.99", "EUR", BillingPeriod.MONTHLY, "Meditaciones", "Sueno", "Cursos"),
+            plan("yearly", "Anual", "69.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")
         )
     ),
     service(
@@ -1126,8 +1155,8 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFE62D2E),
         summary = "Clases de fitness online, fuerza, bici, yoga y entrenamientos.",
         plans = listOf(
-            plan("app-one", "App One", "12.99", "USD", BillingPeriod.MONTHLY, "Clases seleccionadas", "Entrenamientos", "App"),
-            plan("app-plus", "App+", "24.00", "USD", BillingPeriod.MONTHLY, "Mas clases", "Equipos Peloton", "Metricas")
+            plan("app-one", "App One", "12.99", "EUR", BillingPeriod.MONTHLY, "Clases seleccionadas", "Entrenamientos", "App"),
+            plan("app-plus", "App+", "24.00", "EUR", BillingPeriod.MONTHLY, "Mas clases", "Equipos Peloton", "Metricas")
         )
     )
 )

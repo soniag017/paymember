@@ -136,7 +136,10 @@ fun SubscriptionFormScreen(
                 onFormChange = onFormChange
             )
         } else {
-            LockedPlanSummary(formState = formState)
+            LockedPlanSummary(
+                formState = formState,
+                totalPriceInput = totalPriceInput
+            )
         }
 
         if (!isEdit) {
@@ -144,6 +147,7 @@ fun SubscriptionFormScreen(
                 basePrice = basePrice,
                 people = splitPeople,
                 currentPrice = currentPrice,
+                period = formState.period,
                 onPeopleChange = { people -> splitPeople = people.coerceIn(1, 20) }
             )
         }
@@ -199,7 +203,7 @@ fun SubscriptionFormScreen(
         ) {
             Text(
                 if (isEdit) "Guardar cambios"
-                else "Crear suscripción · ${formatMoney(currentPrice)}/mes"
+                else "Crear suscripción · ${formatMoney(currentPrice)}/${periodShortLabel(formState.period)}"
             )
         }
 
@@ -296,7 +300,11 @@ private fun ManualPlanCard(
 }
 
 @Composable
-private fun LockedPlanSummary(formState: SubscriptionFormState) {
+private fun LockedPlanSummary(
+    formState: SubscriptionFormState,
+    totalPriceInput: String
+) {
+    val planPrice = totalPriceInput.ifBlank { formState.price }
     SectionCard {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -310,7 +318,7 @@ private fun LockedPlanSummary(formState: SubscriptionFormState) {
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    "${formState.price.replace('.', ',')} €",
+                    "${planPrice.replace('.', ',')} \u20ac",
                     style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum")
                 )
                 AssistChip(
@@ -328,6 +336,7 @@ private fun SplitPriceCard(
     basePrice: Double,
     people: Int,
     currentPrice: Double,
+    period: BillingPeriod,
     onPeopleChange: (Int) -> Unit
 ) {
     SectionCard {
@@ -380,8 +389,8 @@ private fun SplitPriceCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Eyebrow("TU PARTE", color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f))
-                        Text("${formatMoney(basePrice)} ÷ $people", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.78f))
+                        Eyebrow(partLabel(period), color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.72f))
+                        Text("${formatMoney(basePrice)} ÷ $people ${periodLongLabel(period)}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.78f))
                     }
                     MoneyText(currentPrice, size = 32.sp, color = MaterialTheme.colorScheme.onPrimary)
                 }
@@ -595,5 +604,17 @@ private fun formatPrice(value: Double): String {
 }
 
 private fun formatMoney(value: Double): String {
-    return String.format(Locale.getDefault(), "%.2f €", value)
+    return String.format(Locale.getDefault(), "%.2f \u20ac", value)
+}
+
+private fun periodShortLabel(period: BillingPeriod): String {
+    return if (period == BillingPeriod.MONTHLY) "mes" else "a\u00f1o"
+}
+
+private fun periodLongLabel(period: BillingPeriod): String {
+    return if (period == BillingPeriod.MONTHLY) "al mes" else "al a\u00f1o"
+}
+
+private fun partLabel(period: BillingPeriod): String {
+    return if (period == BillingPeriod.MONTHLY) "TU PARTE AL MES" else "TU PARTE AL A\u00d1O"
 }

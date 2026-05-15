@@ -16,28 +16,35 @@ import kotlinx.coroutines.launch
 class SubscriptionRepository(
     private val apiService: ApiService,
     private val authManager: RemoteAuthManager,
-    private val demoMode: Boolean = false
+    demoMode: Boolean = false
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private var isDemoMode = demoMode
     private var nextDemoId = 100
-    private val items = MutableStateFlow(if (demoMode) demoSubscriptions() else emptyList())
+    private val items = MutableStateFlow(if (isDemoMode) demoSubscriptions() else emptyList())
 
     init {
-        if (!demoMode && authManager.isLoggedIn()) {
+        if (!isDemoMode && authManager.isLoggedIn()) {
             scope.launch { refresh() }
         }
     }
 
     fun getAllSubscriptions(): Flow<List<SubscriptionEntity>> = items.asStateFlow()
 
+    fun enableDemoMode() {
+        isDemoMode = true
+        nextDemoId = 100
+        items.value = demoSubscriptions()
+    }
+
     suspend fun getSubscriptionById(id: Int): SubscriptionEntity? {
-        if (demoMode) return items.value.firstOrNull { it.id == id }
+        if (isDemoMode) return items.value.firstOrNull { it.id == id }
         requireSession()
         return apiService.getSubscription(id.toLong()).toEntity()
     }
 
     suspend fun addSubscription(subscription: SubscriptionEntity): Long {
-        if (demoMode) {
+        if (isDemoMode) {
             val generatedId = nextDemoId++
             items.value = items.value + subscription.copy(id = generatedId)
             return generatedId.toLong()
@@ -49,7 +56,7 @@ class SubscriptionRepository(
     }
 
     suspend fun updateSubscription(subscription: SubscriptionEntity) {
-        if (demoMode) {
+        if (isDemoMode) {
             items.value = items.value.map { item ->
                 if (item.id == subscription.id) subscription else item
             }
@@ -61,7 +68,7 @@ class SubscriptionRepository(
     }
 
     suspend fun deleteSubscription(subscription: SubscriptionEntity) {
-        if (demoMode) {
+        if (isDemoMode) {
             items.value = items.value.filterNot { it.id == subscription.id }
             return
         }
@@ -71,7 +78,7 @@ class SubscriptionRepository(
     }
 
     suspend fun refreshIfLoggedIn() {
-        if (demoMode) return
+        if (isDemoMode) return
         if (!authManager.isLoggedIn()) return
         refresh()
     }

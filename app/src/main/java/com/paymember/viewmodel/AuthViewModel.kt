@@ -40,6 +40,16 @@ class AuthViewModel(
         )
     }
 
+    fun continueAsGuest() {
+        _uiState.value = _uiState.value.copy(
+            email = "",
+            password = "",
+            isLoading = false,
+            errorMessage = null,
+            isAuthenticated = true
+        )
+    }
+
     fun submitEmailPassword() {
         val current = _uiState.value
         if (current.email.isBlank() || current.password.length < 6) {
