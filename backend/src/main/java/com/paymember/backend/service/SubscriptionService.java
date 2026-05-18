@@ -5,6 +5,7 @@ import com.paymember.backend.model.AppUser;
 import com.paymember.backend.model.Subscription;
 import com.paymember.backend.repository.AppUserRepository;
 import com.paymember.backend.repository.SubscriptionRepository;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -60,5 +61,6 @@ public class SubscriptionService {
         target.setReminderEnabled(dto.reminderEnabled());
         target.setReminderDaysBefore(dto.reminderDaysBefore());
         target.setNotes(dto.notes() == null || dto.notes().isBlank() ? null : dto.notes().trim());
+        target.setStartDate(dto.startDate() == null ? LocalDate.now() : dto.startDate());
     }
 }

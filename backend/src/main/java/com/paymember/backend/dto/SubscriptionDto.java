@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
+import java.time.LocalDate;
 
 public record SubscriptionDto(
     Long id,
@@ -16,9 +18,11 @@ public record SubscriptionDto(
     @NotNull BillingPeriod period,
     @NotNull Boolean reminderEnabled,
     @NotNull @Min(0) @Max(30) Integer reminderDaysBefore,
-    String notes
+    String notes,
+    @PastOrPresent LocalDate startDate
 ) {
     public static SubscriptionDto fromEntity(Subscription entity) {
+        LocalDate startDate = entity.getStartDate() == null ? LocalDate.now() : entity.getStartDate();
         return new SubscriptionDto(
             entity.getId(),
             entity.getServiceName(),
@@ -27,7 +31,8 @@ public record SubscriptionDto(
             entity.getPeriod(),
             entity.getReminderEnabled(),
             entity.getReminderDaysBefore(),
-            entity.getNotes()
+            entity.getNotes(),
+            startDate
         );
     }
 }

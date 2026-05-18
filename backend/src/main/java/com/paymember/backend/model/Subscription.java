@@ -9,7 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "subscriptions")
@@ -44,6 +46,16 @@ public class Subscription {
     @Column
     private String notes;
 
+    @Column
+    private LocalDate startDate;
+
+    @PrePersist
+    void applyDefaults() {
+        if (startDate == null) {
+            startDate = LocalDate.now();
+        }
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public AppUser getUser() { return user; }
@@ -62,4 +74,6 @@ public class Subscription {
     public void setReminderDaysBefore(Integer reminderDaysBefore) { this.reminderDaysBefore = reminderDaysBefore; }
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+    public LocalDate getStartDate() { return startDate; }
+    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
 }

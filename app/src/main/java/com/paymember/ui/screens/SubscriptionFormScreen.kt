@@ -85,6 +85,10 @@ fun SubscriptionFormScreen(
     val billingDayValue = formState.billingDay.toIntOrNull()
     val billingDayError = formState.billingDay.isNotBlank() &&
         (billingDayValue == null || billingDayValue !in 1..31)
+    val startDateValue = parseStartDate(formState.startDate)
+    val startDateError = formState.startDate.isBlank() ||
+        startDateValue == null ||
+        startDateValue.isAfter(LocalDate.now())
 
     LaunchedEffect(formState.serviceName, isEdit, isManual) {
         if (!isManual && !isEdit && formState.price.isNotBlank()) {
@@ -158,6 +162,12 @@ fun SubscriptionFormScreen(
             onDaySelected = { day -> onFormChange { copy(billingDay = day.toString()) } }
         )
 
+        StartDateCard(
+            value = formState.startDate,
+            isError = startDateError,
+            onValueChange = { value -> onFormChange { copy(startDate = value) } }
+        )
+
         ReminderCard(
             enabled = formState.reminderEnabled,
             daysBefore = formState.reminderDaysBefore,
@@ -216,6 +226,45 @@ fun SubscriptionFormScreen(
         ) {
             Text("Volver")
         }
+        }
+    }
+}
+
+@Composable
+private fun StartDateCard(
+    value: String,
+    isError: Boolean,
+    onValueChange: (String) -> Unit
+) {
+    SectionCard {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Column {
+                    Text("Fecha del primer cobro", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "Se usa para calcular el historial y el total gastado.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            OutlinedTextField(
+                value = value,
+                onValueChange = onValueChange,
+                label = { Text("AAAA-MM-DD") },
+                placeholder = { Text("2025-01-15") },
+                isError = isError,
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (isError) {
+                Text(
+                    "Introduce una fecha valida que no sea futura.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }
@@ -617,4 +666,8 @@ private fun periodLongLabel(period: BillingPeriod): String {
 
 private fun partLabel(period: BillingPeriod): String {
     return if (period == BillingPeriod.MONTHLY) "TU PARTE AL MES" else "TU PARTE AL A\u00d1O"
+}
+
+private fun parseStartDate(value: String): LocalDate? {
+    return runCatching { LocalDate.parse(value.trim()) }.getOrNull()
 }

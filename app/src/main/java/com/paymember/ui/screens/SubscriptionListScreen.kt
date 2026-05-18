@@ -27,7 +27,9 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,8 +49,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.paymember.data.analysis.BillingHistoryCalculator
 import com.paymember.data.model.BillingPeriod
 import com.paymember.data.model.SubscriptionEntity
+import com.paymember.data.usage.AppUsageInsight
 import com.paymember.ui.components.Eyebrow
 import com.paymember.ui.components.MoneyText
 import com.paymember.ui.components.SectionCard
@@ -61,7 +66,6 @@ import com.paymember.ui.theme.Rose
 import com.paymember.ui.theme.Sky
 import java.time.LocalDate
 import java.time.Month
-import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -74,6 +78,11 @@ fun SubscriptionListScreen(
     onAddClick: () -> Unit,
     onManualClick: () -> Unit,
     onCalendarClick: () -> Unit,
+    usageMonitoringEnabled: Boolean,
+    usagePermissionGranted: Boolean,
+    usageInsights: List<AppUsageInsight>,
+    onUsageMonitoringToggle: (Boolean) -> Unit,
+    onOpenUsageSettings: () -> Unit,
     onEditClick: (Int) -> Unit,
     onDeleteClick: (SubscriptionEntity) -> Unit
 ) {
@@ -91,6 +100,15 @@ fun SubscriptionListScreen(
             item { CreateSubscriptionPanel(onCatalogClick = onAddClick, onManualClick = onManualClick) }
             item { MonthSectionHeader() }
             item { MonthlyHeroCard(subscriptions = subscriptions) }
+            item {
+                UsageMonitorCard(
+                    enabled = usageMonitoringEnabled,
+                    permissionGranted = usagePermissionGranted,
+                    insights = usageInsights,
+                    onEnabledChange = onUsageMonitoringToggle,
+                    onOpenSettings = onOpenUsageSettings
+                )
+            }
             item { UpcomingStrip(subscriptions = subscriptions, onCalendarClick = onCalendarClick) }
             item { SubscriptionsHeader(count = subscriptions.size) }
 
@@ -106,6 +124,106 @@ fun SubscriptionListScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun UsageMonitorCard(
+    enabled: Boolean,
+    permissionGranted: Boolean,
+    insights: List<AppUsageInsight>,
+    onEnabledChange: (Boolean) -> Unit,
+    onOpenSettings: () -> Unit
+) {
+    SectionCard {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.PhoneAndroid, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Column {
+                        Eyebrow("USO DE APPS")
+                        Text("Avisos de suscripciones sin abrir", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+                Switch(checked = enabled, onCheckedChange = onEnabledChange)
+            }
+
+            when {
+                !enabled -> {
+                    Text(
+                        "Activala para detectar apps que sigues pagando pero no abres en este dispositivo.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                !permissionGranted -> {
+                    Text(
+                        "Android requiere activar el acceso al uso desde Ajustes.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    OutlinedButton(
+                        onClick = onOpenSettings,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.small
+                    ) {
+                        Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Text("Abrir ajustes", modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+                insights.isEmpty() -> {
+                    AssistChip(
+                        onClick = {},
+                        enabled = false,
+                        label = { Text("Sin alertas de inactividad") }
+                    )
+                }
+                else -> {
+                    insights.take(3).forEach { insight ->
+                        UsageInsightRow(insight = insight)
+                    }
+                    if (insights.size > 3) {
+                        Text(
+                            "+${insights.size - 3} suscripciones mas sin uso reciente",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UsageInsightRow(insight: AppUsageInsight) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.42f), MaterialTheme.shapes.small)
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ServiceLogo(Services.brandFor(inferBrandKey(insight.serviceName)), size = 36.dp)
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(
+                insight.serviceName.substringBefore(" - "),
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                insight.usageLabel(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(formatMoney(insight.monthlyCost), style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"))
     }
 }
 
@@ -484,24 +602,7 @@ private fun SubscriptionEntity.monthlyEquivalent(): Double {
 }
 
 private fun nextChargeDate(item: SubscriptionEntity): LocalDate {
-    val today = LocalDate.now()
-    val safeDay = item.billingDay.coerceIn(1, 31)
-
-    if (item.period == BillingPeriod.MONTHLY) {
-        val thisMonthDate = today.withDayOfMonth(safeDay.coerceAtMost(today.lengthOfMonth()))
-        if (!thisMonthDate.isBefore(today)) return thisMonthDate
-
-        val nextMonth = today.plusMonths(1)
-        return nextMonth.withDayOfMonth(safeDay.coerceAtMost(nextMonth.lengthOfMonth()))
-    }
-
-    val annualMonth = today.month
-    val thisYearMonth = YearMonth.of(today.year, annualMonth)
-    val thisYearDate = thisYearMonth.atDay(safeDay.coerceAtMost(thisYearMonth.lengthOfMonth()))
-    if (!thisYearDate.isBefore(today)) return thisYearDate
-
-    val nextYearMonth = YearMonth.of(today.year + 1, annualMonth)
-    return nextYearMonth.atDay(safeDay.coerceAtMost(nextYearMonth.lengthOfMonth()))
+    return BillingHistoryCalculator.nextChargeDate(item)
 }
 
 private fun SubscriptionEntity.cleanName(): String = serviceName.substringBefore(" - ").ifBlank { serviceName }
@@ -531,6 +632,15 @@ private fun monthLabel(): String {
     val today = LocalDate.now()
     val month = today.month.getDisplayName(TextStyle.FULL, Locale("es", "ES")).replaceFirstChar { it.uppercase(Locale("es", "ES")) }
     return "$month ${today.year}"
+}
+
+private fun AppUsageInsight.usageLabel(): String {
+    val days = daysSinceLastUse
+    return if (days == null) {
+        "Sin uso detectado en 6 meses"
+    } else {
+        "Sin abrir desde hace $days dias"
+    }
 }
 
 private fun formatMoney(value: Double): String {

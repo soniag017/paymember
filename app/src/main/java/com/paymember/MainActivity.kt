@@ -1,9 +1,11 @@
 package com.paymember
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -19,6 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,8 +38,11 @@ import com.paymember.data.remote.RemoteAuthManager
 import com.paymember.data.remote.SessionStore
 import com.paymember.data.reminder.ReminderScheduler
 import com.paymember.data.repository.SubscriptionRepository
+import com.paymember.data.usage.AppUsageInsight
+import com.paymember.data.usage.AppUsageMonitor
 import com.paymember.ui.screens.BillingCalendarScreen
 import com.paymember.ui.screens.SubscriptionCatalogScreen
+import com.paymember.ui.screens.SubscriptionDetailScreen
 import com.paymember.ui.screens.SubscriptionFormScreen
 import com.paymember.ui.screens.SubscriptionListScreen
 import com.paymember.ui.screens.SubscriptionPlansScreen
@@ -92,6 +99,20 @@ class MainActivity : ComponentActivity() {
 
                 val subscriptions by viewModel.subscriptions.collectAsState()
                 val formState by viewModel.formState.collectAsState()
+                val usageMonitor = remember { AppUsageMonitor(this@MainActivity) }
+                var usageMonitoringEnabled by rememberSaveable { mutableStateOf(usageMonitor.isEnabled()) }
+                var usagePermissionGranted by remember { mutableStateOf(usageMonitor.hasUsageAccess()) }
+                var usageInsights by remember { mutableStateOf<List<AppUsageInsight>>(emptyList()) }
+
+                fun refreshUsageInsights() {
+                    usagePermissionGranted = usageMonitor.hasUsageAccess()
+                    usageInsights = usageMonitor.findDormantSubscriptions(subscriptions)
+                }
+
+                val usageSettingsLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult(),
+                    onResult = { refreshUsageInsights() }
+                )
 
                 LaunchedEffect(Unit) {
                     if (
@@ -115,6 +136,10 @@ class MainActivity : ComponentActivity() {
                             launchSingleTop = true
                         }
                     }
+                }
+
+                LaunchedEffect(subscriptions, usageMonitoringEnabled, usagePermissionGranted) {
+                    refreshUsageInsights()
                 }
 
                 Box(
@@ -169,12 +194,38 @@ class MainActivity : ComponentActivity() {
                                     onCalendarClick = {
                                         navController.navigate("calendar")
                                     },
-                                    onEditClick = { id -> navController.navigate("form/$id") },
+                                    usageMonitoringEnabled = usageMonitoringEnabled,
+                                    usagePermissionGranted = usagePermissionGranted,
+                                    usageInsights = usageInsights,
+                                    onUsageMonitoringToggle = { enabled ->
+                                        usageMonitor.setEnabled(enabled)
+                                        usageMonitoringEnabled = enabled
+                                        refreshUsageInsights()
+                                        if (enabled && !usageMonitor.hasUsageAccess()) {
+                                            usageSettingsLauncher.launch(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                                        }
+                                    },
+                                    onOpenUsageSettings = {
+                                        usageSettingsLauncher.launch(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+                                    },
+                                    onEditClick = { id -> navController.navigate("detail/$id") },
                                     onDeleteClick = { subscription ->
                                         viewModel.deleteSubscription(subscription) { deletedId ->
                                             ReminderScheduler.cancel(this@MainActivity, deletedId)
                                         }
                                     }
+                                )
+                            }
+
+                            composable(
+                                route = "detail/{id}",
+                                arguments = listOf(navArgument("id") { type = NavType.IntType })
+                            ) { backStackEntry ->
+                                val id = backStackEntry.arguments?.getInt("id") ?: 0
+                                SubscriptionDetailScreen(
+                                    subscription = subscriptions.firstOrNull { it.id == id },
+                                    onBackClick = { navController.popBackStack() },
+                                    onEditClick = { navController.navigate("form/$id") }
                                 )
                             }
 

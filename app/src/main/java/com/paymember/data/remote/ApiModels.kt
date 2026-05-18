@@ -26,7 +26,8 @@ data class SubscriptionPayload(
     val period: BillingPeriod,
     val reminderEnabled: Boolean,
     val reminderDaysBefore: Int,
-    val notes: String?
+    val notes: String?,
+    val startDate: String?
 ) {
     fun toEntity(): SubscriptionEntity = SubscriptionEntity(
         id = (id ?: 0L).toInt(),
@@ -36,7 +37,8 @@ data class SubscriptionPayload(
         period = period,
         reminderEnabled = reminderEnabled,
         reminderDaysBefore = reminderDaysBefore,
-        notes = notes
+        notes = notes,
+        startDate = startDate.orEmpty()
     )
 }
 
@@ -48,5 +50,6 @@ fun SubscriptionEntity.toPayload(): SubscriptionPayload = SubscriptionPayload(
     period = period,
     reminderEnabled = reminderEnabled,
     reminderDaysBefore = reminderDaysBefore,
-    notes = notes
+    notes = notes,
+    startDate = startDate.ifBlank { null }
 )

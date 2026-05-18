@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.paymember.data.model.BillingPeriod
 import com.paymember.data.model.SubscriptionEntity
 import com.paymember.data.repository.SubscriptionRepository
+import java.time.LocalDate
+import java.time.format.DateTimeParseException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ data class SubscriptionFormState(
     val period: BillingPeriod = BillingPeriod.MONTHLY,
     val reminderEnabled: Boolean = false,
     val reminderDaysBefore: Int = 0,
+    val startDate: String = LocalDate.now().toString(),
     val notes: String = ""
 )
 
@@ -54,6 +57,7 @@ class SubscriptionViewModel(
                 period = item.period,
                 reminderEnabled = item.reminderEnabled,
                 reminderDaysBefore = item.reminderDaysBefore,
+                startDate = item.startDate.ifBlank { LocalDate.now().toString() },
                 notes = item.notes.orEmpty()
             )
         }
@@ -64,6 +68,7 @@ class SubscriptionViewModel(
         val normalizedPrice = current.price.replace(',', '.')
         val price = normalizedPrice.toDoubleOrNull() ?: return
         val billingDay = current.billingDay.toIntOrNull() ?: return
+        val startDate = current.startDate.toLocalDateOrNull() ?: return
         if (current.serviceName.isBlank() || billingDay !in 1..31 || price <= 0.0) return
 
         val entity = SubscriptionEntity(
@@ -74,7 +79,8 @@ class SubscriptionViewModel(
             period = current.period,
             reminderEnabled = current.reminderEnabled,
             reminderDaysBefore = current.reminderDaysBefore.coerceIn(0, 30),
-            notes = current.notes.ifBlank { null }
+            notes = current.notes.ifBlank { null },
+            startDate = startDate.toString()
         )
 
         viewModelScope.launch {
@@ -106,7 +112,19 @@ class SubscriptionViewModel(
         val normalizedPrice = current.price.replace(',', '.')
         val price = normalizedPrice.toDoubleOrNull() ?: return false
         val billingDay = current.billingDay.toIntOrNull() ?: return false
-        return current.serviceName.isNotBlank() && billingDay in 1..31 && price > 0.0
+        val startDate = current.startDate.toLocalDateOrNull() ?: return false
+        return current.serviceName.isNotBlank() &&
+            billingDay in 1..31 &&
+            price > 0.0 &&
+            !startDate.isAfter(LocalDate.now())
+    }
+
+    private fun String.toLocalDateOrNull(): LocalDate? {
+        return try {
+            LocalDate.parse(trim())
+        } catch (_: DateTimeParseException) {
+            null
+        }
     }
 }
 

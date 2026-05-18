@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.paymember.data.analysis.BillingHistoryCalculator
 import com.paymember.data.model.BillingPeriod
 import com.paymember.data.model.SubscriptionEntity
 import com.paymember.ui.components.Eyebrow
@@ -344,9 +345,7 @@ private fun ChargeRow(item: SubscriptionEntity) {
 }
 
 private fun chargeDateForMonth(item: SubscriptionEntity, month: YearMonth): LocalDate? {
-    val safeDay = item.billingDay.coerceIn(1, 31)
-    if (item.period == BillingPeriod.YEARLY && month.month != LocalDate.now().month) return null
-    return month.atDay(safeDay.coerceAtMost(month.lengthOfMonth()))
+    return BillingHistoryCalculator.chargeDateForMonth(item, month)
 }
 
 private fun YearMonth.monthName(): String {

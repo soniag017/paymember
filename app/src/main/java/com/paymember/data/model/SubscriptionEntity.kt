@@ -3,6 +3,7 @@ package com.paymember.data.model
 import androidx.room.Entity
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
+import java.time.LocalDate
 
 @Entity(tableName = "subscriptions")
 data class SubscriptionEntity(
@@ -15,5 +16,7 @@ data class SubscriptionEntity(
     val reminderEnabled: Boolean,
     @ColumnInfo(defaultValue = "0")
     val reminderDaysBefore: Int = 0,
-    val notes: String?
+    val notes: String?,
+    @ColumnInfo(defaultValue = "''")
+    val startDate: String = LocalDate.now().toString()
 )

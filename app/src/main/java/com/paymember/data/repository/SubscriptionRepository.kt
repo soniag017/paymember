@@ -102,7 +102,8 @@ class SubscriptionRepository(
             period = BillingPeriod.MONTHLY,
             reminderEnabled = true,
             reminderDaysBefore = 1,
-            notes = "Demo local sin backend"
+            notes = "Demo local sin backend",
+            startDate = "2024-01-05"
         ),
         SubscriptionEntity(
             id = 2,
@@ -112,7 +113,8 @@ class SubscriptionRepository(
             period = BillingPeriod.MONTHLY,
             reminderEnabled = true,
             reminderDaysBefore = 3,
-            notes = null
+            notes = null,
+            startDate = "2023-09-12"
         ),
         SubscriptionEntity(
             id = 3,
@@ -122,7 +124,8 @@ class SubscriptionRepository(
             period = BillingPeriod.YEARLY,
             reminderEnabled = true,
             reminderDaysBefore = 7,
-            notes = "Pago anual"
+            notes = "Pago anual",
+            startDate = "2022-05-20"
         )
     )
 }
