@@ -171,6 +171,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                     },
                                     onGoogleToken = authViewModel::submitGoogle,
+                                    onGoogleError = authViewModel::reportGoogleError,
                                     onToggleMode = authViewModel::toggleMode
                                 )
                             }

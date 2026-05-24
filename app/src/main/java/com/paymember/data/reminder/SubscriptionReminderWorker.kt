@@ -12,8 +12,11 @@ import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.paymember.R
+import com.paymember.data.analysis.BillingHistoryCalculator
 import com.paymember.data.db.AppDatabase
-import com.paymember.data.model.BillingPeriod
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 class SubscriptionReminderWorker(
     appContext: Context,
@@ -35,17 +38,19 @@ class SubscriptionReminderWorker(
         createChannelIfNeeded()
 
         if (hasNotificationPermission()) {
-            val periodText = if (subscription.period == BillingPeriod.MONTHLY) "mensual" else "anual"
-            val noticeText = if (subscription.reminderDaysBefore == 0) {
-                "vence hoy"
-            } else {
-                "vence en ${subscription.reminderDaysBefore} dias"
-            }
-            val content = "${subscription.serviceName}: ${subscription.price} EUR ($periodText), $noticeText"
+            val nextCharge = BillingHistoryCalculator.nextChargeDate(subscription)
+            val daysUntilCharge = ChronoUnit.DAYS.between(LocalDate.now(), nextCharge)
+                .coerceAtLeast(0)
+            val content = buildNotificationText(
+                serviceName = subscription.serviceName.cleanServiceName(),
+                price = subscription.price,
+                daysUntilCharge = daysUntilCharge
+            )
             val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_popup_reminder)
-                .setContentTitle("Recordatorio de pago")
+                .setContentTitle("Recordatorio de cobro")
                 .setContentText(content)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(content))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
                 .build()
@@ -65,6 +70,22 @@ class SubscriptionReminderWorker(
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
     }
+
+    private fun buildNotificationText(
+        serviceName: String,
+        price: Double,
+        daysUntilCharge: Long
+    ): String {
+        val dayText = when (daysUntilCharge) {
+            0L -> "hoy"
+            1L -> "manana"
+            else -> "en $daysUntilCharge dias"
+        }
+        val amount = String.format(Locale.getDefault(), "%.2f", price)
+        return "Se va a cobrar el servicio $serviceName $dayText. Importe: $amount EUR."
+    }
+
+    private fun String.cleanServiceName(): String = substringBefore(" - ").ifBlank { this }
 
     private fun createChannelIfNeeded() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return

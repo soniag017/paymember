@@ -1,0 +1,17 @@
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\controller\ApiExceptionHandler.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\controller\AuthController.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\controller\SubscriptionController.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\dto\AuthDtos.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\dto\SubscriptionDto.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\model\AppUser.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\model\BillingPeriod.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\model\Subscription.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\PayMemberBackendApplication.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\repository\AppUserRepository.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\repository\SubscriptionRepository.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\security\GoogleTokenVerifierService.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\security\JwtAuthFilter.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\security\JwtService.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\security\SecurityConfig.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\service\AuthService.java
+C:\Users\Sonia\Desktop\PROYECTO POKEMON\PayMember\backend\src\main\java\com\paymember\backend\service\SubscriptionService.java

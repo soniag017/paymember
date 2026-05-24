@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,7 +58,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.paymember.R
 import com.paymember.ui.components.Eyebrow
 import com.paymember.ui.components.SectionCard
@@ -67,6 +70,8 @@ import com.paymember.ui.components.Services
 import com.paymember.viewmodel.AuthUiState
 import kotlin.math.roundToInt
 
+private const val GoogleWebClientIdPlaceholder = "replace-with-your-web-client-id.apps.googleusercontent.com"
+
 @Composable
 fun LoginScreen(
     uiState: AuthUiState,
@@ -74,26 +79,39 @@ fun LoginScreen(
     onPasswordChange: (String) -> Unit,
     onSubmitEmailPassword: () -> Unit,
     onGoogleToken: (String) -> Unit,
+    onGoogleError: (String) -> Unit,
     onToggleMode: () -> Unit
 ) {
     val context = LocalContext.current
-    val googleOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestEmail()
-        .requestIdToken(context.getString(R.string.google_web_client_id))
-        .build()
-    val googleClient = GoogleSignIn.getClient(context, googleOptions)
+    val googleWebClientId = context.getString(R.string.google_web_client_id)
+    val isGoogleConfigured = googleWebClientId.isNotBlank() && googleWebClientId != GoogleWebClientIdPlaceholder
+    val googleOptions = remember(googleWebClientId) {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestIdToken(googleWebClientId)
+            .build()
+    }
+    val googleClient = remember(context, googleOptions) {
+        GoogleSignIn.getClient(context, googleOptions)
+    }
 
     val googleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val idToken = account.idToken
-                if (!idToken.isNullOrBlank()) {
-                    onGoogleToken(idToken)
-                }
-            } catch (_: ApiException) {
+        if (result.resultCode != Activity.RESULT_OK) {
+            onGoogleError("Inicio de sesion con Google cancelado.")
+            return@rememberLauncherForActivityResult
+        }
+
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            if (idToken.isNullOrBlank()) {
+                onGoogleError("Google no devolvio un token. Revisa el Web Client ID.")
+            } else {
+                onGoogleToken(idToken)
             }
+        } catch (ex: ApiException) {
+            onGoogleError(googleSignInErrorMessage(ex.statusCode))
         }
     }
     val lowerRing = MaterialTheme.colorScheme.primary.copy(alpha = 0.07f)
@@ -182,7 +200,16 @@ fun LoginScreen(
                         Text(if (uiState.isRegisterMode) "Crear cuenta" else "Entrar")
                     }
                     OutlinedButton(
-                        onClick = { googleLauncher.launch(googleClient.signInIntent) },
+                        onClick = {
+                            if (!isGoogleConfigured) {
+                                onGoogleError("Configura GOOGLE_WEB_CLIENT_ID antes de usar Google.")
+                                return@OutlinedButton
+                            }
+
+                            googleClient.signOut().addOnCompleteListener {
+                                googleLauncher.launch(googleClient.signInIntent)
+                            }
+                        },
                         enabled = !uiState.isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -220,6 +247,17 @@ fun LoginScreen(
                 }
             }
         }
+    }
+}
+
+private fun googleSignInErrorMessage(statusCode: Int): String {
+    return when (statusCode) {
+        GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Inicio de sesion con Google cancelado."
+        GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS -> "Ya hay un inicio de sesion con Google en curso."
+        GoogleSignInStatusCodes.SIGN_IN_FAILED -> "Google no pudo iniciar sesion. Intentalo de nuevo."
+        CommonStatusCodes.DEVELOPER_ERROR -> "Configuracion de Google no valida. Revisa package name, SHA-1 y Web Client ID."
+        CommonStatusCodes.NETWORK_ERROR -> "No hay conexion para iniciar sesion con Google."
+        else -> "No se pudo iniciar sesion con Google (codigo $statusCode)."
     }
 }
 

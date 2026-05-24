@@ -1,9 +1,25 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use(localProperties::load)
+}
+val googleWebClientId = providers.gradleProperty("GOOGLE_WEB_CLIENT_ID")
+    .orElse(providers.environmentVariable("GOOGLE_WEB_CLIENT_ID"))
+    .getOrElse(
+        localProperties.getProperty(
+            "GOOGLE_WEB_CLIENT_ID",
+            "replace-with-your-web-client-id.apps.googleusercontent.com"
+        )
+    )
 
 android {
     namespace = "com.paymember"
@@ -17,6 +33,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resValue("string", "google_web_client_id", googleWebClientId)
     }
 
     buildTypes {
@@ -81,4 +98,5 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.14.2")
     testImplementation("androidx.room:room-testing:$roomVersion")
     testImplementation("androidx.test:core:1.6.1")
+    testImplementation("org.robolectric:robolectric:4.13")
 }

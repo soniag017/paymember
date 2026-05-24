@@ -77,6 +77,14 @@ class AuthViewModel(
     }
 
     fun submitGoogle(idToken: String) {
+        if (idToken.isBlank()) {
+            _uiState.value = _uiState.value.copy(
+                isLoading = false,
+                errorMessage = "Google no devolvio un token valido."
+            )
+            return
+        }
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             runCatching {
@@ -90,5 +98,12 @@ class AuthViewModel(
                 )
             }
         }
+    }
+
+    fun reportGoogleError(message: String) {
+        _uiState.value = _uiState.value.copy(
+            isLoading = false,
+            errorMessage = message
+        )
     }
 }

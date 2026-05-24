@@ -3,5 +3,4 @@
     <string name="app_name">PayMember</string>
     <string name="reminder_channel_name">Recordatorios de suscripciones</string>
     <string name="reminder_channel_description">Avisos de próximos cobros</string>
-    <string name="google_web_client_id">replace-with-your-web-client-id.apps.googleusercontent.com</string>
 </resources>

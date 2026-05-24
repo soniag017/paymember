@@ -58,8 +58,8 @@ Variables opcionales para MySQL:
 - `Web client` (para verificar `idToken` en backend).
 - `Android client` (para firma/app Android).
 2. Poner el `Web client ID` en:
-- Android: `app/src/main/res/values/strings.xml` -> `google_web_client_id`
-- Backend: `backend/src/main/resources/application.yml` -> `app.google.web-client-id`
+- Android: `local.properties` -> `GOOGLE_WEB_CLIENT_ID=tu-web-client-id.apps.googleusercontent.com`
+- Backend: variable de entorno `GOOGLE_WEB_CLIENT_ID=tu-web-client-id.apps.googleusercontent.com`
 3. El backend ya valida el `idToken` recibido antes de emitir JWT propio.
 
 ## Decisiones de migracion

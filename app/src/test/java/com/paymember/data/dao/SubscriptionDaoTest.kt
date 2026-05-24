@@ -12,7 +12,10 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class SubscriptionDaoTest {
 
     private lateinit var db: AppDatabase
@@ -29,7 +32,9 @@ class SubscriptionDaoTest {
 
     @After
     fun teardown() {
-        db.close()
+        if (::db.isInitialized) {
+            db.close()
+        }
     }
 
     @Test
