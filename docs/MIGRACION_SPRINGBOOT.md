@@ -49,6 +49,11 @@ Variables opcionales para MySQL:
 - `DB_USERNAME` (default: `root`)
 - `DB_PASSWORD` (default: `root`)
 
+Para desarrollo local sin MySQL se puede usar H2 en memoria:
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
 ## 2) Android
 - Ejecuta la app en emulador Android.
 - La app apunta a `http://10.0.2.2:8080/` (host local desde emulador).
