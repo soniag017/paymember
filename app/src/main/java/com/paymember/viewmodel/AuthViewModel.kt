@@ -106,4 +106,9 @@ class AuthViewModel(
             errorMessage = message
         )
     }
+
+    fun logout() {
+        authManager.logout()
+        _uiState.value = AuthUiState()
+    }
 }

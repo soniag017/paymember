@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
@@ -87,6 +88,7 @@ fun SubscriptionListScreen(
     onAddClick: () -> Unit,
     onManualClick: () -> Unit,
     onCalendarClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     usageMonitoringEnabled: Boolean,
     usagePermissionGranted: Boolean,
     usageInsights: List<AppUsageInsight>,
@@ -114,7 +116,8 @@ fun SubscriptionListScreen(
                         displayName = displayName,
                         darkTheme = darkTheme,
                         onToggleDarkTheme = onToggleDarkTheme,
-                        onNotificationsClick = { showReminderDialog = true }
+                        onNotificationsClick = { showReminderDialog = true },
+                        onLogoutClick = onLogoutClick
                     )
                 }
                 item { CreateSubscriptionPanel(onCatalogClick = onAddClick, onManualClick = onManualClick) }
@@ -260,7 +263,8 @@ private fun HomeHeader(
     displayName: String,
     darkTheme: Boolean,
     onToggleDarkTheme: () -> Unit,
-    onNotificationsClick: () -> Unit
+    onNotificationsClick: () -> Unit,
+    onLogoutClick: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -297,6 +301,11 @@ private fun HomeHeader(
                 icon = Icons.Default.Notifications,
                 contentDescription = "Avisos",
                 onClick = onNotificationsClick
+            )
+            HeaderIconButton(
+                icon = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Cerrar sesion",
+                onClick = onLogoutClick
             )
         }
     }
@@ -493,27 +502,14 @@ private fun MonthlyHeroCard(subscriptions: List<SubscriptionEntity>) {
         color = MaterialTheme.colorScheme.surface
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top) {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Eyebrow("GASTO MENSUAL · $month")
-                    MoneyText(totalMonthly, size = 42.sp)
-                    Text(
-                        "≈ ${formatMoney(annualProjection)} al año · ${subscriptions.size} activas",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    shape = CircleShape
-                ) {
-                    Text(
-                        "~ -€4,12",
-                        modifier = Modifier.padding(horizontal = 13.dp, vertical = 9.dp),
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Eyebrow("GASTO MENSUAL · $month")
+                MoneyText(totalMonthly, size = 42.sp)
+                Text(
+                    "≈ ${formatMoney(annualProjection)} al año · ${subscriptions.size} activas",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             DistributionBar(subscriptions.sortedByDescending { it.monthlyEquivalent() }.map { it.serviceName to it.monthlyEquivalent() })
             LegendRows(subscriptions.sortedByDescending { it.monthlyEquivalent() }.take(4))

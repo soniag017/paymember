@@ -37,6 +37,12 @@ class SubscriptionRepository(
         items.value = demoSubscriptions()
     }
 
+    fun clearForLogout() {
+        isDemoMode = false
+        nextDemoId = 100
+        items.value = emptyList()
+    }
+
     suspend fun getSubscriptionById(id: Int): SubscriptionEntity? {
         if (isDemoMode) return items.value.firstOrNull { it.id == id }
         requireSession()

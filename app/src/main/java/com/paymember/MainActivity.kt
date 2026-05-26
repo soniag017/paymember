@@ -195,6 +195,15 @@ class MainActivity : ComponentActivity() {
                                     onCalendarClick = {
                                         navController.navigate("calendar")
                                     },
+                                    onLogoutClick = {
+                                        repository.clearForLogout()
+                                        viewModel.clearForm()
+                                        authViewModel.logout()
+                                        navController.navigate("login") {
+                                            popUpTo("list") { inclusive = true }
+                                            launchSingleTop = true
+                                        }
+                                    },
                                     usageMonitoringEnabled = usageMonitoringEnabled,
                                     usagePermissionGranted = usagePermissionGranted,
                                     usageInsights = usageInsights,
