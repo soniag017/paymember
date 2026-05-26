@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val baseUrl = "http://10.0.2.2:8080/"
+        val baseUrl = "http://192.168.1.158:8080/"
         val sessionStore = SessionStore(this)
         val apiService = ApiClient(sessionStore).create(baseUrl)
         val authManager = RemoteAuthManager(apiService, sessionStore)
