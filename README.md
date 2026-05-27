@@ -24,9 +24,10 @@ App Android en Kotlin + Jetpack Compose para gestionar suscripciones periodicas.
 ## Backend Spring Boot
 1. Abrir terminal en `backend/`.
 2. Tener MySQL corriendo (el backend crea la BD `paymember` si no existe).
-3. Ejecutar `mvn spring-boot:run`.
-3. La API queda en `http://localhost:8080`.
-4. En emulador Android, la app usa `http://10.0.2.2:8080`.
+3. Para Google Sign-In, asegurarse de que `local.properties` incluye `GOOGLE_WEB_CLIENT_ID=...`.
+4. Ejecutar `mvn spring-boot:run`.
+5. La API queda en `http://localhost:8080`.
+6. En emulador Android, la app usa `http://10.0.2.2:8080`.
 
 ## Notificaciones
 - En Android 13+ la app pedira permiso de notificaciones al iniciar.
