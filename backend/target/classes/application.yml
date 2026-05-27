@@ -2,6 +2,10 @@ server:
   port: 8080
 
 spring:
+  config:
+    import:
+      - optional:file:./local.properties
+      - optional:file:../local.properties
   profiles:
     active: mysql
   jpa:
@@ -14,4 +18,4 @@ app:
     secret: change-this-secret-in-production-paymember-2026
     expiration-ms: 86400000
   google:
-    web-client-id: ${GOOGLE_WEB_CLIENT_ID:replace-with-your-web-client-id.apps.googleusercontent.com}
+    web-client-id: ${GOOGLE_WEB_CLIENT_ID:441221335034-v27oi02jug5cjlkaqe5djl7e6fp69ncv.apps.googleusercontent.com}

@@ -96,7 +96,7 @@ fun SubscriptionDetailScreen(
                 item {
                     SectionCard {
                         Text(
-                            "Aun no hay cobros registrados desde la fecha de inicio.",
+                            "Aún no hay cobros registrados desde la fecha de inicio.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -119,10 +119,10 @@ private fun MissingSubscription(onBackClick: () -> Unit) {
             .padding(18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        DetailHeader(title = "Suscripcion", onBackClick = onBackClick, onEditClick = {})
+        DetailHeader(title = "Suscripción", onBackClick = onBackClick, onEditClick = {})
         SectionCard {
             Text(
-                "No se ha encontrado esta suscripcion.",
+                "No se ha encontrado esta suscripción.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -183,7 +183,11 @@ private fun SpendingSummaryCard(
     SectionCard(padding = PaddingValues(18.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                ServiceLogo(Services.brandFor(inferBrandKey(subscription.serviceName)), size = 48.dp)
+                ServiceLogo(
+                    Services.brandFor(inferBrandKey(subscription.serviceName)),
+                    size = 48.dp,
+                    customImageUri = subscription.customIconUri
+                )
                 Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                     Eyebrow("TOTAL GASTADO")
                     Text(subscription.planName(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)

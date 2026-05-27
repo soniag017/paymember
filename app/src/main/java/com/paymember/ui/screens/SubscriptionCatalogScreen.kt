@@ -61,7 +61,7 @@ fun SubscriptionCatalogScreen(
     var query by remember { mutableStateOf("") }
     val categories = remember(PopularSubscriptionTemplates.size, SubscriptionCategories.size) {
         listOf(CatalogCategory("all", "Todas", "Todas")) +
-            SubscriptionCategories.map { category ->
+            SubscriptionCategories.sortedBy { it.title.lowercase(Locale("es", "ES")) }.map { category ->
                 CatalogCategory(category.id, category.title, category.title)
             }
     }
@@ -74,11 +74,9 @@ fun SubscriptionCatalogScreen(
     }
     val visibleServices = remember(selectedCategory, selectedBaseServices, query) {
         val base = if (selectedCategory == "all") {
-            selectedBaseServices.sortedWith(
-                compareBy<SubscriptionTemplate> { it.categoryId }.thenBy { it.name }
-            )
+            selectedBaseServices.sortedBy { it.displayName().lowercase(Locale("es", "ES")) }
         } else {
-            selectedBaseServices
+            selectedBaseServices.sortedBy { it.displayName().lowercase(Locale("es", "ES")) }
         }
         base.filter { query.isBlank() || it.name.contains(query, ignoreCase = true) }
     }
@@ -383,8 +381,12 @@ private fun SubscriptionTemplate.categoryLabel(): String {
         "spotify" -> "M\u00fasica"
         "chatgpt" -> "IA"
         "icloud" -> "Nube"
-        else -> SubscriptionCategories.firstOrNull { it.id == categoryId }?.title.orEmpty()
+        else -> categoryTitleFor(categoryId)
     }
+}
+
+private fun categoryTitleFor(categoryId: String): String {
+    return SubscriptionCategories.firstOrNull { it.id == categoryId }?.title.orEmpty()
 }
 
 private fun SubscriptionTemplate.lowestPriceLabel(): String {

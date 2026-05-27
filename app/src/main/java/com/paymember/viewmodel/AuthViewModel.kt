@@ -80,7 +80,7 @@ class AuthViewModel(
         if (idToken.isBlank()) {
             _uiState.value = _uiState.value.copy(
                 isLoading = false,
-                errorMessage = "Google no devolvio un token valido."
+                errorMessage = "Google no devolvió un token válido."
             )
             return
         }

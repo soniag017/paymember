@@ -37,7 +37,7 @@ Esta auditoria revisa los 87 servicios del catalogo de PayMember. Criterio aplic
 | SkyShowtime | Estandar con anuncios anual 47.99 EUR/ano; Estandar 6.99 EUR/mes; Premium 10.00 EUR/mes |
 | Movistar Plus+ | Plan Libre Cine y Series 4.99 EUR/mes; Plan Libre completo 9.99 EUR/mes |
 | DAZN | Made in USA 7.99 EUR/mes; Baloncesto 14.99 EUR/mes; Motor 29.99 EUR/mes; Futbol 29.99 EUR/mes; Premium 44.99 EUR/mes |
-| Crunchyroll | Fan 4.99 EUR/mes; Mega Fan 6.49 EUR/mes; Mega Fan anual 64.99 EUR/ano |
+| Crunchyroll | Fan 5.99 EUR/mes; Mega Fan 7.49 EUR/mes; Mega Fan anual 59.99 EUR/ano |
 | Spotify | Individual 11.99 EUR/mes; Duo 16.99 EUR/mes; Familiar 20.99 EUR/mes; Estudiantes 6.49 EUR/mes |
 | Apple Music | Individual 10.99 EUR/mes; Familiar 16.99 EUR/mes; Estudiante 5.99 EUR/mes |
 | YouTube Premium | Individual 13.99 EUR/mes; Familiar 25.99 EUR/mes; Estudiante 8.99 EUR/mes |

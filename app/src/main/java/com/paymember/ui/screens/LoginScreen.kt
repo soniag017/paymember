@@ -24,9 +24,15 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +40,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +60,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -83,6 +95,7 @@ fun LoginScreen(
     onToggleMode: () -> Unit
 ) {
     val context = LocalContext.current
+    var passwordVisible by remember { mutableStateOf(false) }
     val googleWebClientId = context.getString(R.string.google_web_client_id)
     val isGoogleConfigured = googleWebClientId.isNotBlank() && googleWebClientId != GoogleWebClientIdPlaceholder
     val googleOptions = remember(googleWebClientId) {
@@ -99,9 +112,9 @@ fun LoginScreen(
         if (result.data == null) {
             onGoogleError(
                 if (result.resultCode == Activity.RESULT_OK) {
-                    "Google no devolvio datos de inicio de sesion."
+                    "Google no devolvió datos de inicio de sesión."
                 } else {
-                    "Inicio de sesion con Google cancelado."
+                    "Inicio de sesión con Google cancelado."
                 }
             )
             return@rememberLauncherForActivityResult
@@ -112,7 +125,7 @@ fun LoginScreen(
             val account = task.getResult(ApiException::class.java)
             val idToken = account.idToken
             if (idToken.isNullOrBlank()) {
-                onGoogleError("Google no devolvio un token. Revisa el Web Client ID.")
+                onGoogleError("Google no devolvió un token. Revisa el Web Client ID.")
             } else {
                 onGoogleToken(idToken)
             }
@@ -182,6 +195,20 @@ fun LoginScreen(
                         label = { Text("Contrase\u00f1a") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
+                        visualTransformation = if (passwordVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(
+                                    imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                    contentDescription = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+                                )
+                            }
+                        },
                         shape = MaterialTheme.shapes.small
                     )
                     if (!uiState.errorMessage.isNullOrBlank()) {
@@ -258,12 +285,12 @@ fun LoginScreen(
 
 private fun googleSignInErrorMessage(statusCode: Int): String {
     return when (statusCode) {
-        GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Inicio de sesion con Google cancelado."
-        GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS -> "Ya hay un inicio de sesion con Google en curso."
-        GoogleSignInStatusCodes.SIGN_IN_FAILED -> "Google no pudo iniciar sesion. Intentalo de nuevo."
-        CommonStatusCodes.DEVELOPER_ERROR -> "Configuracion de Google no valida. Revisa package name, SHA-1 y Web Client ID."
-        CommonStatusCodes.NETWORK_ERROR -> "No hay conexion para iniciar sesion con Google."
-        else -> "No se pudo iniciar sesion con Google (codigo $statusCode)."
+        GoogleSignInStatusCodes.SIGN_IN_CANCELLED -> "Inicio de sesión con Google cancelado."
+        GoogleSignInStatusCodes.SIGN_IN_CURRENTLY_IN_PROGRESS -> "Ya hay un inicio de sesión con Google en curso."
+        GoogleSignInStatusCodes.SIGN_IN_FAILED -> "Google no pudo iniciar sesión. Inténtalo de nuevo."
+        CommonStatusCodes.DEVELOPER_ERROR -> "Configuración de Google no válida. Revisa package name, SHA-1 y Web Client ID."
+        CommonStatusCodes.NETWORK_ERROR -> "No hay conexión para iniciar sesión con Google."
+        else -> "No se pudo iniciar sesión con Google (código $statusCode)."
     }
 }
 

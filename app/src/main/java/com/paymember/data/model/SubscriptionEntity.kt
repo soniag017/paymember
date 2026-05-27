@@ -18,5 +18,7 @@ data class SubscriptionEntity(
     val reminderDaysBefore: Int = 0,
     val notes: String?,
     @ColumnInfo(defaultValue = "''")
-    val startDate: String = LocalDate.now().toString()
+    val startDate: String = LocalDate.now().toString(),
+    @ColumnInfo(defaultValue = "''")
+    val customIconUri: String = ""
 )

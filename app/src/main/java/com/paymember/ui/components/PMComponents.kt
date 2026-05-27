@@ -1,6 +1,9 @@
 package com.paymember.ui.components
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,10 +18,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -106,8 +113,22 @@ data class ServiceBrand(
 fun ServiceLogo(
     service: ServiceBrand,
     size: Dp = 44.dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    customImageUri: String = ""
 ) {
+    val context = LocalContext.current
+    val customImage = remember(customImageUri) {
+        if (customImageUri.isBlank()) {
+            null
+        } else {
+            runCatching {
+                context.contentResolver.openInputStream(Uri.parse(customImageUri)).use { stream ->
+                    BitmapFactory.decodeStream(stream)?.asImageBitmap()
+                }
+            }.getOrNull()
+        }
+    }
+
     Box(
         modifier = modifier
             .size(size)
@@ -115,7 +136,14 @@ fun ServiceLogo(
             .background(service.bg),
         contentAlignment = Alignment.Center
     ) {
-        if (service.drawable != null) {
+        if (customImage != null) {
+            Image(
+                bitmap = customImage,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(size)
+            )
+        } else if (service.drawable != null) {
             Icon(
                 painter = painterResource(service.drawable),
                 contentDescription = null,

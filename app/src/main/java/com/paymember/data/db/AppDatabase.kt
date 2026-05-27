@@ -12,7 +12,7 @@ import com.paymember.data.model.SubscriptionEntity
 
 @Database(
     entities = [SubscriptionEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -32,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance
@@ -47,6 +48,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE subscriptions ADD COLUMN startDate TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE subscriptions ADD COLUMN customIconUri TEXT NOT NULL DEFAULT ''")
             }
         }
     }

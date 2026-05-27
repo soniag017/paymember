@@ -15,9 +15,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,7 +28,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -56,21 +61,22 @@ import com.paymember.viewmodel.SubscriptionViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-private const val DEV_SKIP_LOGIN = false
+private const val DEV_SKIP_LOGIN = true
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val baseUrl = "http://192.168.1.158:8080/"
+        val baseUrl = BuildConfig.API_BASE_URL
         val sessionStore = SessionStore(this)
         val apiService = ApiClient(sessionStore).create(baseUrl)
         val authManager = RemoteAuthManager(apiService, sessionStore)
         val repository = SubscriptionRepository(
             apiService = apiService,
             authManager = authManager,
-            demoMode = false
+            appContext = applicationContext,
+            demoMode = DEV_SKIP_LOGIN
         )
 
         setContent {
@@ -98,7 +104,10 @@ class MainActivity : ComponentActivity() {
                 val authState by authViewModel.uiState.collectAsState()
 
                 val subscriptions by viewModel.subscriptions.collectAsState()
+                val syncState by viewModel.syncState.collectAsState()
                 val formState by viewModel.formState.collectAsState()
+                val snackbarHostState = remember { SnackbarHostState() }
+                var snackbarMessage by remember { mutableStateOf<String?>(null) }
                 val usageMonitor = remember { AppUsageMonitor(this@MainActivity) }
                 var usageMonitoringEnabled by rememberSaveable { mutableStateOf(usageMonitor.isEnabled()) }
                 var usagePermissionGranted by remember { mutableStateOf(usageMonitor.hasUsageAccess()) }
@@ -130,7 +139,7 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(authState.isAuthenticated) {
                     if (authState.isAuthenticated) {
-                        repository.refreshIfLoggedIn()
+                        runCatching { repository.refreshIfLoggedIn() }
                         navController.navigate("list") {
                             popUpTo("login") { inclusive = true }
                             launchSingleTop = true
@@ -140,6 +149,12 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(subscriptions, usageMonitoringEnabled, usagePermissionGranted) {
                     refreshUsageInsights()
+                }
+
+                LaunchedEffect(snackbarMessage) {
+                    val message = snackbarMessage ?: return@LaunchedEffect
+                    snackbarHostState.showSnackbar(message)
+                    snackbarMessage = null
                 }
 
                 Box(
@@ -183,7 +198,14 @@ class MainActivity : ComponentActivity() {
                                         authManager.currentDisplayName() ?: "Invitada"
                                     },
                                     darkTheme = darkTheme,
+                                    syncState = syncState,
                                     onToggleDarkTheme = { darkTheme = !darkTheme },
+                                    onRefresh = {
+                                        viewModel.refreshSubscriptions(
+                                            onDone = { snackbarMessage = "Datos actualizados" },
+                                            onError = { snackbarMessage = it }
+                                        )
+                                    },
                                     onAddClick = {
                                         viewModel.clearForm()
                                         navController.navigate("catalog")
@@ -220,9 +242,14 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onEditClick = { id -> navController.navigate("detail/$id") },
                                     onDeleteClick = { subscription ->
-                                        viewModel.deleteSubscription(subscription) { deletedId ->
-                                            ReminderScheduler.cancel(this@MainActivity, deletedId)
-                                        }
+                                        viewModel.deleteSubscription(
+                                            subscription = subscription,
+                                            onDone = { deletedId ->
+                                                ReminderScheduler.cancel(this@MainActivity, deletedId)
+                                                snackbarMessage = "Suscripción eliminada"
+                                            },
+                                            onError = { snackbarMessage = it }
+                                        )
                                     }
                                 )
                             }
@@ -348,17 +375,21 @@ class MainActivity : ComponentActivity() {
                                     isFormValid = viewModel.isFormValid(),
                                     onFormChange = viewModel::updateForm,
                                     onSaveClick = {
-                                        viewModel.saveSubscription { saved ->
-                                            ReminderScheduler.schedule(this@MainActivity, saved)
-                                            if (id == 0) {
-                                                navController.navigate("list") {
-                                                    popUpTo("list") { inclusive = false }
-                                                    launchSingleTop = true
+                                        viewModel.saveSubscription(
+                                            onDone = { saved ->
+                                                ReminderScheduler.schedule(this@MainActivity, saved)
+                                                snackbarMessage = "Suscripción guardada"
+                                                if (id == 0) {
+                                                    navController.navigate("list") {
+                                                        popUpTo("list") { inclusive = false }
+                                                        launchSingleTop = true
+                                                    }
+                                                } else {
+                                                    navController.popBackStack()
                                                 }
-                                            } else {
-                                                navController.popBackStack()
-                                            }
-                                        }
+                                            },
+                                            onError = { snackbarMessage = it }
+                                        )
                                     },
                                     onBackClick = { navController.popBackStack() },
                                     isEdit = id != 0,
@@ -367,6 +398,13 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .windowInsetsPadding(WindowInsets.safeDrawing)
+                            .padding(16.dp)
+                    )
                 }
             }
         }

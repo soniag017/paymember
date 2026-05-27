@@ -30,17 +30,17 @@ data class SubscriptionPlanTemplate(
 )
 
 val SubscriptionCategories = listOf(
-    SubscriptionCategoryTemplate("streaming", "Streaming", "Video, cine, series, anime y deporte"),
-    SubscriptionCategoryTemplate("music", "Musica y audio", "Musica, podcasts, audiolibros y YouTube"),
-    SubscriptionCategoryTemplate("news", "Noticias y lectura", "Periodicos digitales, revistas y lectura online"),
-    SubscriptionCategoryTemplate("shopping", "Compras y entregas", "Envios, comida a domicilio y supermercados"),
-    SubscriptionCategoryTemplate("cloud", "Nube y productividad", "Almacenamiento, ofimatica y herramientas creativas"),
+    SubscriptionCategoryTemplate("learning", "Aprendizaje", "Idiomas, cursos y formación online"),
+    SubscriptionCategoryTemplate("wellness", "Bienestar", "Deporte, meditación y entrenamiento"),
+    SubscriptionCategoryTemplate("shopping", "Compras y entregas", "Envíos, comida a domicilio y supermercados"),
     SubscriptionCategoryTemplate("finance", "Finanzas", "Presupuesto, banca premium, bolsa y datos de mercado"),
-    SubscriptionCategoryTemplate("gaming", "Gaming", "Catalogos de juegos, online y juego en la nube"),
-    SubscriptionCategoryTemplate("ai", "IA y asistentes", "Asistentes, busqueda y herramientas con IA"),
-    SubscriptionCategoryTemplate("learning", "Aprendizaje", "Idiomas, cursos y formacion online"),
-    SubscriptionCategoryTemplate("wellness", "Bienestar", "Deporte, meditacion y entrenamiento"),
-    SubscriptionCategoryTemplate("security", "Privacidad", "VPN, password managers y correo seguro")
+    SubscriptionCategoryTemplate("gaming", "Gaming", "Catálogos de juegos, online y juego en la nube"),
+    SubscriptionCategoryTemplate("ai", "IA y asistentes", "Asistentes, búsqueda y herramientas con IA"),
+    SubscriptionCategoryTemplate("music", "Música y audio", "Música, podcasts, audiolibros y YouTube"),
+    SubscriptionCategoryTemplate("news", "Noticias y lectura", "Periódicos digitales, revistas y lectura online"),
+    SubscriptionCategoryTemplate("cloud", "Nube y productividad", "Almacenamiento, ofimática y herramientas creativas"),
+    SubscriptionCategoryTemplate("security", "Privacidad", "VPN, password managers y correo seguro"),
+    SubscriptionCategoryTemplate("streaming", "Streaming", "Video, cine, series, anime y deporte")
 )
 
 val PopularSubscriptionTemplates = listOf(
@@ -160,11 +160,11 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Deporte en directo y bajo demanda, segun derechos disponibles.",
         plans = listOf(
-            plan("made-usa", "Made in USA", "7.99", "NFL, NBA y deportes USA", "2 dispositivos", "Cancela con 30 dias"),
-            plan("basket", "Baloncesto", "14.99", "Baloncesto", "2 dispositivos", "Cancela con 30 dias"),
-            plan("motor", "Motor", "29.99", "F1 y MotoGP", "2 dispositivos", "Cancela con 30 dias"),
-            plan("football", "Futbol", "29.99", "Futbol seleccionado", "2 dispositivos", "Cancela con 30 dias"),
-            plan("premium", "Premium", "44.99", "Todo DAZN", "2 dispositivos", "Plan mas completo")
+            plan("made-usa", "Made in USA", "7.99", "NFL, NBA y deportes USA", "2 dispositivos", "Cancela con 30 días"),
+            plan("basket", "Baloncesto", "14.99", "Baloncesto", "2 dispositivos", "Cancela con 30 días"),
+            plan("motor", "Motor", "29.99", "F1 y MotoGP", "2 dispositivos", "Cancela con 30 días"),
+            plan("football", "Fútbol", "29.99", "Fútbol seleccionado", "2 dispositivos", "Cancela con 30 días"),
+            plan("premium", "Premium", "44.99", "Todo DAZN", "2 dispositivos", "Plan más completo")
         )
     ),
     service(
@@ -175,9 +175,9 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFFF47521),
         summary = "Anime, simulcasts y manga seleccionado.",
         plans = listOf(
-            plan("fan", "Fan", "4.99", "Sin anuncios", "1 dispositivo", "Anime en simulcast"),
-            plan("mega", "Mega Fan", "6.49", "4 dispositivos", "Descargas", "Sin anuncios"),
-            plan("yearly", "Mega Fan anual", "64.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Descargas", "Ahorro frente al mes")
+            plan("fan", "Fan", "5.99", "Sin anuncios", "1 dispositivo", "Anime en simulcast"),
+            plan("mega", "Mega Fan", "7.49", "4 dispositivos", "Descargas", "Sin anuncios"),
+            plan("yearly", "Mega Fan anual", "59.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Descargas", "Ahorro frente al mes")
         )
     ),
     service(
@@ -191,7 +191,7 @@ val PopularSubscriptionTemplates = listOf(
             plan("individual", "Individual", "11.99", "1 cuenta", "Sin anuncios", "Descargas"),
             plan("duo", "Duo", "16.99", "2 cuentas", "Mismo domicilio", "Sin anuncios"),
             plan("family", "Familiar", "20.99", "Hasta 6 cuentas", "Mismo domicilio", "Control familiar"),
-            plan("student", "Estudiantes", "6.49", "Verificacion estudiante", "1 cuenta", "Precio reducido")
+            plan("student", "Estudiantes", "6.49", "Verificación estudiante", "1 cuenta", "Precio reducido")
         )
     ),
     service(
@@ -204,7 +204,7 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("individual", "Individual", "10.99", "Sin anuncios", "Audio sin perdida", "Apple Music Classical"),
             plan("family", "Familiar", "16.99", "Hasta 6 personas", "En Familia", "Bibliotecas separadas"),
-            plan("student", "Estudiante", "5.99", "Verificacion estudiante", "Incluye Apple TV", "Precio reducido")
+            plan("student", "Estudiante", "5.99", "Verificación estudiante", "Incluye Apple TV", "Precio reducido")
         )
     ),
     service(
@@ -213,11 +213,11 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "YT",
         categoryId = "music",
         accentColor = Color(0xFFFF0000),
-        summary = "YouTube sin anuncios, reproduccion en segundo plano y YouTube Music.",
+        summary = "YouTube sin anuncios, reproducción en segundo plano y YouTube Music.",
         plans = listOf(
             plan("individual", "Individual", "13.99", "YouTube sin anuncios", "Segundo plano", "YouTube Music incluido"),
             plan("family", "Familiar", "25.99", "Hasta 5 miembros", "Grupo familiar", "YouTube Music incluido"),
-            plan("student", "Estudiante", "8.99", "Verificacion estudiante", "YouTube Music incluido", "Precio reducido")
+            plan("student", "Estudiante", "8.99", "Verificación estudiante", "YouTube Music incluido", "Precio reducido")
         )
     ),
     service(
@@ -268,7 +268,7 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("individual", "Individual", "10.99", "Audio lossless", "Dolby Atmos", "Descargas"),
             plan("family", "Familiar", "16.99", "Hasta 6 cuentas", "Audio lossless", "Sin anuncios"),
-            plan("student", "Estudiante", "5.49", "Verificacion estudiante", "Audio lossless", "Precio reducido")
+            plan("student", "Estudiante", "5.49", "Verificación estudiante", "Audio lossless", "Precio reducido")
         )
     ),
     service(
@@ -293,7 +293,7 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("monthly", "Mensual", "4.99", "Envios rapidos", "Prime Video", "Ofertas Prime"),
             plan("yearly", "Anual", "49.90", "EUR", BillingPeriod.YEARLY, "Pago anual", "Envios rapidos", "Ahorro frente al mes"),
-            plan("student", "Prime Student", "2.49", "Verificacion estudiante", "Envios Prime", "Precio reducido")
+            plan("student", "Prime Student", "2.49", "Verificación estudiante", "Envíos Prime", "Precio reducido")
         )
     ),
     service(
@@ -474,7 +474,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "SA",
         categoryId = "cloud",
         accentColor = Color(0xFF00A86B),
-        summary = "Coleccion de apps para Mac e iOS con una sola suscripcion.",
+        summary = "Colección de apps para Mac e iOS con una sola suscripción.",
         plans = listOf(
             plan("personal", "Personal", "9.99", "EUR", BillingPeriod.MONTHLY, "260+ apps", "Mac", "Prueba gratuita"),
             plan("power-user", "Power User", "12.49", "EUR", BillingPeriod.MONTHLY, "Mac + iOS", "Mas dispositivos", "Apps premium")
@@ -486,7 +486,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "PS+",
         categoryId = "gaming",
         accentColor = Color(0xFF003791),
-        summary = "Multijugador online, juegos mensuales y catalogos segun nivel.",
+        summary = "Multijugador online, juegos mensuales y catálogos según nivel.",
         plans = listOf(
             plan("essential", "Essential", "8.99", "Juegos mensuales", "Online", "Descuentos"),
             plan("essential-yearly", "Essential anual", "71.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Juegos mensuales", "Online"),
@@ -506,7 +506,7 @@ val PopularSubscriptionTemplates = listOf(
         plans = listOf(
             plan("essential", "Essential", "8.99", "EUR", BillingPeriod.MONTHLY, "Catalogo basico", "Online", "Ventajas en juegos"),
             plan("pc", "PC Game Pass", "12.99", "EUR", BillingPeriod.MONTHLY, "Catalogo PC", "EA Play", "Juegos seleccionados"),
-            plan("premium", "Premium", "12.99", "EUR", BillingPeriod.MONTHLY, "Catalogo consola", "Online", "Sin lanzamientos dia 1 en todos los casos"),
+            plan("premium", "Premium", "12.99", "EUR", BillingPeriod.MONTHLY, "Catálogo consola", "Online", "Sin lanzamientos día 1 en todos los casos"),
             plan("ultimate", "Ultimate", "20.99", "EUR", BillingPeriod.MONTHLY, "Consola, PC y nube", "EA Play", "Mas ventajas")
         )
     ),
@@ -570,12 +570,12 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "Claude",
         categoryId = "ai",
         accentColor = Color(0xFFD97757),
-        summary = "Asistente de Anthropic para escritura, analisis, codigo y documentos.",
+        summary = "Asistente de Anthropic para escritura, análisis, código y documentos.",
         plans = listOf(
             plan("pro", "Pro mensual", "20.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Mas uso", "Claude Code"),
             plan("pro-yearly", "Pro anual", "200.00", "EUR", BillingPeriod.YEARLY, "Precio global orientativo", "Pago anual", "Mas uso"),
             plan("max", "Max 5x", "100.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Mas limites", "Prioridad"),
-            plan("max-20x", "Max 20x", "200.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Limites mas altos", "Funciones anticipadas")
+            plan("max-20x", "Max 20x", "200.00", "EUR", BillingPeriod.MONTHLY, "Precio global orientativo", "Límites más altos", "Funciones anticipadas")
         )
     ),
     service(
@@ -587,7 +587,7 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Gemini avanzado junto a almacenamiento de Google One.",
         plans = listOf(
             plan("ai-pro", "AI Pro", "19.99", "Gemini avanzado", "2 TB", "NotebookLM y Workspace segun disponibilidad"),
-            plan("ai-ultra", "AI Ultra", "249.99", "Limites mas altos", "Funciones avanzadas", "Almacenamiento ampliado")
+            plan("ai-ultra", "AI Ultra", "249.99", "Límites más altos", "Funciones avanzadas", "Almacenamiento ampliado")
         )
     ),
     service(
@@ -635,7 +635,7 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF1C7ED6),
         summary = "Contenido de Mediaset, directos, programas y planes mensual/anual.",
         plans = listOf(
-            plan("basic", "Plan basico", "5.00", "Contenido mitele PLUS", "Directos y programas", "Cancela cuando quieras"),
+            plan("basic", "Plan básico", "5.00", "Contenido mitele PLUS", "Directos y programas", "Cancela cuando quieras"),
             plan("family", "Plan familiar", "8.00", "Mas perfiles", "Contenido PLUS", "Uso compartido"),
             plan("basic-yearly", "Basico anual", "42.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismo plan basico")
         )
@@ -647,9 +647,9 @@ val PopularSubscriptionTemplates = listOf(
         categoryId = "streaming",
         accentColor = Color(0xFFE8D08C),
         logoTextColor = Color(0xFF111111),
-        summary = "Cine espanol, clasicos, series y catalogo europeo.",
+        summary = "Cine español, clásicos, series y catálogo europeo.",
         plans = listOf(
-            plan("monthly", "Mensual", "4.99", "Catalogo completo", "14 dias gratis", "Sin permanencia"),
+            plan("monthly", "Mensual", "4.99", "Catálogo completo", "14 días gratis", "Sin permanencia"),
             plan("yearly", "Anual", "49.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Catalogo completo", "Ahorro frente al mes")
         )
     ),
@@ -674,7 +674,7 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Podcasts exclusivos, audiolibros y escucha offline.",
         plans = listOf(
             plan("monthly", "Mensual", "4.99", "Podcasts exclusivos", "20h de audiolibros", "Modo offline"),
-            plan("yearly", "Anual", "49.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Paga 10 meses", "30 dias gratis")
+            plan("yearly", "Anual", "49.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Paga 10 meses", "30 días gratis")
         )
     ),
     service(
@@ -755,9 +755,9 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "ABC",
         categoryId = "news",
         accentColor = Color(0xFF111111),
-        summary = "ABC.es sin limite, firmas de opinion, newsletters y Archivo ABC.",
+        summary = "ABC.es sin límite, firmas de opinión, newsletters y Archivo ABC.",
         plans = listOf(
-            plan("monthly", "Premium mensual", "9.99", "Acceso ilimitado", "Archivo ABC", "3 sesiones simultaneas"),
+            plan("monthly", "Premium mensual", "9.99", "Acceso ilimitado", "Archivo ABC", "3 sesiones simultáneas"),
             plan("yearly", "Premium anual", "99.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Dos meses de ahorro", "Archivo y opinion")
         )
     ),
@@ -770,7 +770,7 @@ val PopularSubscriptionTemplates = listOf(
         summary = "Diario digital con actualidad, opinion, economia e Invertia.",
         plans = listOf(
             plan("monthly", "Mensual", "6.99", "Acceso digital", "Actualidad y opinion", "Cancela cuando quieras"),
-            plan("yearly", "Un ano", "59.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Acceso digital", "Regalo disponible")
+            plan("yearly", "Un año", "59.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Acceso digital", "Regalo disponible")
         )
     ),
     service(
@@ -827,7 +827,7 @@ val PopularSubscriptionTemplates = listOf(
         categoryId = "learning",
         accentColor = Color(0xFF58CC02),
         logoTextColor = Color(0xFF111111),
-        summary = "Idiomas gamificados sin anuncios, corazones ilimitados y practica personalizada.",
+        summary = "Idiomas gamificados sin anuncios, corazones ilimitados y práctica personalizada.",
         plans = listOf(
             plan("super", "Super", "13.99", "Sin anuncios", "Corazones ilimitados", "Practica personalizada"),
             plan("super-yearly", "Super anual", "87.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Mismas funciones Super"),
@@ -841,11 +841,11 @@ val PopularSubscriptionTemplates = listOf(
         categoryId = "learning",
         accentColor = Color(0xFFFFB000),
         logoTextColor = Color(0xFF111111),
-        summary = "Cursos de idiomas por niveles, dialogos y repasos.",
+        summary = "Cursos de idiomas por niveles, diálogos y repasos.",
         plans = listOf(
             plan("monthly", "Mensual", "12.99", "1 idioma", "Lecciones guiadas", "Repaso"),
             plan("yearly", "Anual", "83.88", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "1 idioma"),
-            plan("lifetime", "Lifetime", "199.99", "EUR", BillingPeriod.YEARLY, "Pago unico orientativo", "Todos los idiomas", "Sin renovacion")
+            plan("lifetime", "Lifetime", "199.99", "EUR", BillingPeriod.YEARLY, "Pago único orientativo", "Todos los idiomas", "Sin renovación")
         )
     ),
     service(
@@ -928,7 +928,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "1P",
         categoryId = "security",
         accentColor = Color(0xFF2368D5),
-        summary = "Gestor de contrasenas, passkeys, tarjetas y secretos familiares.",
+        summary = "Gestor de contraseñas, passkeys, tarjetas y secretos familiares.",
         plans = listOf(
             plan("individual", "Individual", "2.99", "EUR", BillingPeriod.MONTHLY, "Facturacion anual", "Apps ilimitadas", "1 GB documentos"),
             plan("families", "Families", "4.99", "EUR", BillingPeriod.MONTHLY, "Facturacion anual", "Hasta 5 personas", "Cuentas familiares")
@@ -942,7 +942,7 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF00A6A6),
         summary = "Presupuesto personal y familiar con metodo de sobres y sincronizacion.",
         plans = listOf(
-            plan("monthly", "Mensual", "14.99", "EUR", BillingPeriod.MONTHLY, "Presupuesto completo", "Compartido hasta 6", "34 dias gratis"),
+            plan("monthly", "Mensual", "14.99", "EUR", BillingPeriod.MONTHLY, "Presupuesto completo", "Compartido hasta 6", "34 días gratis"),
             plan("yearly", "Anual", "109.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "YNAB Together")
         )
     ),
@@ -1010,7 +1010,7 @@ val PopularSubscriptionTemplates = listOf(
         accentColor = Color(0xFF111111),
         summary = "Asistente de programacion integrado en IDEs y GitHub.",
         plans = listOf(
-            plan("pro", "Pro", "10.00", "EUR", BillingPeriod.MONTHLY, "Completado de codigo", "Chat", "Modelos avanzados"),
+            plan("pro", "Pro", "10.00", "EUR", BillingPeriod.MONTHLY, "Completado de código", "Chat", "Modelos avanzados"),
             plan("pro-plus", "Pro+", "39.00", "EUR", BillingPeriod.MONTHLY, "Mas limites", "Modelos premium", "Funciones avanzadas")
         )
     ),
@@ -1020,7 +1020,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "C",
         categoryId = "ai",
         accentColor = Color(0xFF111111),
-        summary = "Editor de codigo con IA, agentes, autocompletado y contexto de repo.",
+        summary = "Editor de código con IA, agentes, autocompletado y contexto de repo.",
         plans = listOf(
             plan("pro", "Pro", "20.00", "EUR", BillingPeriod.MONTHLY, "Uso ampliado", "Agentes", "Autocompletado"),
             plan("pro-yearly", "Pro anual", "192.00", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Funciones Pro")
@@ -1069,7 +1069,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "U+",
         categoryId = "gaming",
         accentColor = Color(0xFF111111),
-        summary = "Catalogo Ubisoft, ediciones premium y acceso dia uno segun plan.",
+        summary = "Catálogo Ubisoft, ediciones premium y acceso día uno según plan.",
         plans = listOf(
             plan("classics", "Classics", "7.99", "Catalogo clasico", "PC", "Juegos seleccionados"),
             plan("premium", "Premium", "17.99", "Novedades", "DLC y ediciones premium", "PC y nube segun disponibilidad")
@@ -1094,7 +1094,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "F",
         categoryId = "gaming",
         accentColor = Color(0xFF7A5CFF),
-        summary = "Suscripcion mensual de Fortnite con pase, pavos y recompensas.",
+        summary = "Suscripción mensual de Fortnite con pase, pavos y recompensas.",
         plans = listOf(
             plan("monthly", "Crew mensual", "11.99", "Pase de batalla", "1000 paVos", "Pack mensual")
         )
@@ -1129,7 +1129,7 @@ val PopularSubscriptionTemplates = listOf(
         logoText = "Ca",
         categoryId = "wellness",
         accentColor = Color(0xFF2A73CC),
-        summary = "Meditacion, sueno, musica relajante y programas guiados.",
+        summary = "Meditación, sueño, música relajante y programas guiados.",
         plans = listOf(
             plan("monthly", "Mensual", "14.99", "EUR", BillingPeriod.MONTHLY, "Meditaciones", "Sleep Stories", "Musica"),
             plan("yearly", "Anual", "69.99", "EUR", BillingPeriod.YEARLY, "Pago anual", "Ahorro frente al mes", "Catalogo completo")

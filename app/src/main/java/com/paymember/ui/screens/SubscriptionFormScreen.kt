@@ -1,5 +1,6 @@
 package com.paymember.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -19,10 +20,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
@@ -50,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -77,9 +83,21 @@ fun SubscriptionFormScreen(
     isEdit: Boolean,
     isManual: Boolean
 ) {
+    val context = LocalContext.current
     var splitPeople by remember(formState.serviceName, isEdit, isManual) { mutableIntStateOf(1) }
     var totalPriceInput by remember(formState.serviceName, isEdit, isManual) { mutableStateOf(formState.price) }
     var notesExpanded by remember { mutableStateOf(false) }
+    val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            runCatching {
+                context.contentResolver.takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+            onFormChange { copy(customIconUri = uri.toString()) }
+        }
+    }
     val basePrice = totalPriceInput.replace(',', '.').toDoubleOrNull() ?: 0.0
     val currentPrice = formState.price.replace(',', '.').toDoubleOrNull() ?: 0.0
     val billingDayValue = formState.billingDay.toIntOrNull()
@@ -137,7 +155,9 @@ fun SubscriptionFormScreen(
                         onFormChange { copy(price = total?.let { formatPrice(it / splitPeople) } ?: "") }
                     }
                 },
-                onFormChange = onFormChange
+                onFormChange = onFormChange,
+                onPickImage = { imagePicker.launch(arrayOf("image/*")) },
+                onRemoveImage = { onFormChange { copy(customIconUri = "") } }
             )
         } else {
             LockedPlanSummary(
@@ -312,11 +332,41 @@ private fun ManualPlanCard(
     formState: SubscriptionFormState,
     totalPriceInput: String,
     onTotalPriceChange: (String) -> Unit,
-    onFormChange: (SubscriptionFormState.() -> SubscriptionFormState) -> Unit
+    onFormChange: (SubscriptionFormState.() -> SubscriptionFormState) -> Unit,
+    onPickImage: () -> Unit,
+    onRemoveImage: () -> Unit
 ) {
     SectionCard {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Eyebrow("MANUAL")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                ServiceLogo(
+                    Services.brandFor(inferBrandKey(formState.serviceName)),
+                    size = 58.dp,
+                    customImageUri = formState.customIconUri
+                )
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Foto del servicio", style = MaterialTheme.typography.titleMedium)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(onClick = onPickImage, shape = MaterialTheme.shapes.small) {
+                            Icon(Icons.Default.AddPhotoAlternate, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Text(
+                                if (formState.customIconUri.isBlank()) "Elegir" else "Cambiar",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                        if (formState.customIconUri.isNotBlank()) {
+                            IconButton(onClick = onRemoveImage) {
+                                Icon(Icons.Default.Delete, contentDescription = "Quitar foto")
+                            }
+                        }
+                    }
+                }
+            }
             OutlinedTextField(
                 value = formState.serviceName,
                 onValueChange = { value -> onFormChange { copy(serviceName = value) } },
@@ -360,7 +410,11 @@ private fun LockedPlanSummary(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ServiceLogo(Services.brandFor(inferBrandKey(formState.serviceName)), size = 44.dp)
+            ServiceLogo(
+                Services.brandFor(inferBrandKey(formState.serviceName)),
+                size = 44.dp,
+                customImageUri = formState.customIconUri
+            )
             Column(modifier = Modifier.weight(1f)) {
                 Eyebrow("TARIFA SELECCIONADA")
                 Text(formState.serviceName, style = MaterialTheme.typography.titleMedium)

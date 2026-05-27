@@ -263,7 +263,11 @@ private fun CalendarDay(
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
                     charges.take(2).forEach { item ->
-                        ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 18.dp)
+                        ServiceLogo(
+                            Services.brandFor(inferBrandKey(item.serviceName)),
+                            size = 18.dp,
+                            customImageUri = item.customIconUri
+                        )
                     }
                 }
             }
@@ -284,7 +288,7 @@ private fun DayChargeDetails(
                 verticalAlignment = Alignment.Top
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Eyebrow("COBROS DEL DIA")
+                    Eyebrow("COBROS DEL DÍA")
                     Text(date.dayLabel(), style = MaterialTheme.typography.titleMedium)
                 }
                 Surface(color = MaterialTheme.colorScheme.primaryContainer, contentColor = MaterialTheme.colorScheme.onPrimaryContainer, shape = CircleShape) {
@@ -298,7 +302,7 @@ private fun DayChargeDetails(
 
             if (charges.isEmpty()) {
                 Text(
-                    "No hay cobros programados para este dia.",
+                    "No hay cobros programados para este día.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -321,7 +325,11 @@ private fun ChargeRow(item: SubscriptionEntity) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 40.dp)
+        ServiceLogo(
+            Services.brandFor(inferBrandKey(item.serviceName)),
+            size = 40.dp,
+            customImageUri = item.customIconUri
+        )
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(item.cleanName(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(
@@ -365,9 +373,9 @@ private fun SubscriptionEntity.planName(): String = serviceName.substringAfter("
 
 private fun reminderText(daysBefore: Int): String {
     return when (daysBefore) {
-        0 -> "el mismo dia"
-        1 -> "1 dia antes"
-        else -> "$daysBefore dias antes"
+        0 -> "el mismo día"
+        1 -> "1 día antes"
+        else -> "$daysBefore días antes"
     }
 }
 

@@ -78,8 +78,8 @@ class SubscriptionReminderWorker(
     ): String {
         val dayText = when (daysUntilCharge) {
             0L -> "hoy"
-            1L -> "manana"
-            else -> "en $daysUntilCharge dias"
+            1L -> "mañana"
+            else -> "en $daysUntilCharge días"
         }
         val amount = String.format(Locale.getDefault(), "%.2f", price)
         return "Se va a cobrar el servicio $serviceName $dayText. Importe: $amount EUR."

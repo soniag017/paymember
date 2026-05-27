@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.paymember.data.model.BillingPeriod
 import com.paymember.data.model.SubscriptionEntity
 import com.paymember.data.repository.SubscriptionRepository
+import com.paymember.data.repository.SyncUiState
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ data class SubscriptionFormState(
     val reminderEnabled: Boolean = false,
     val reminderDaysBefore: Int = 0,
     val startDate: String = LocalDate.now().toString(),
+    val customIconUri: String = "",
     val notes: String = ""
 )
 
@@ -33,6 +35,9 @@ class SubscriptionViewModel(
 
     val subscriptions = repository.getAllSubscriptions()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val syncState = repository.getSyncState()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SyncUiState())
 
     private val _formState = MutableStateFlow(SubscriptionFormState())
     val formState: StateFlow<SubscriptionFormState> = _formState.asStateFlow()
@@ -58,12 +63,16 @@ class SubscriptionViewModel(
                 reminderEnabled = item.reminderEnabled,
                 reminderDaysBefore = item.reminderDaysBefore,
                 startDate = item.startDate.ifBlank { LocalDate.now().toString() },
+                customIconUri = item.customIconUri,
                 notes = item.notes.orEmpty()
             )
         }
     }
 
-    fun saveSubscription(onDone: (SubscriptionEntity) -> Unit) {
+    fun saveSubscription(
+        onError: (String) -> Unit = {},
+        onDone: (SubscriptionEntity) -> Unit = {}
+    ) {
         val current = _formState.value
         val normalizedPrice = current.price.replace(',', '.')
         val price = normalizedPrice.toDoubleOrNull() ?: return
@@ -80,26 +89,56 @@ class SubscriptionViewModel(
             reminderEnabled = current.reminderEnabled,
             reminderDaysBefore = current.reminderDaysBefore.coerceIn(0, 30),
             notes = current.notes.ifBlank { null },
-            startDate = startDate.toString()
+            startDate = startDate.toString(),
+            customIconUri = current.customIconUri
         )
 
         viewModelScope.launch {
-            val savedEntity = if (entity.id == 0) {
-                val generatedId = repository.addSubscription(entity).toInt()
-                entity.copy(id = generatedId)
-            } else {
-                repository.updateSubscription(entity)
-                entity
+            runCatching {
+                if (entity.id == 0) {
+                    val generatedId = repository.addSubscription(entity).toInt()
+                    entity.copy(id = generatedId)
+                } else {
+                    repository.updateSubscription(entity)
+                    entity
+                }
+            }.onSuccess { savedEntity ->
+                clearForm()
+                onDone(savedEntity)
+            }.onFailure { ex ->
+                onError(ex.friendlyMessage("No se pudo guardar la suscripción."))
             }
-            clearForm()
-            onDone(savedEntity)
         }
     }
 
-    fun deleteSubscription(subscription: SubscriptionEntity, onDone: (Int) -> Unit) {
+    fun deleteSubscription(
+        subscription: SubscriptionEntity,
+        onDone: (Int) -> Unit,
+        onError: (String) -> Unit = {}
+    ) {
         viewModelScope.launch {
-            repository.deleteSubscription(subscription)
-            onDone(subscription.id)
+            runCatching {
+                repository.deleteSubscription(subscription)
+            }.onSuccess {
+                onDone(subscription.id)
+            }.onFailure { ex ->
+                onError(ex.friendlyMessage("No se pudo eliminar la suscripción."))
+            }
+        }
+    }
+
+    fun refreshSubscriptions(
+        onDone: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            runCatching {
+                repository.refreshIfLoggedIn()
+            }.onSuccess { refreshed ->
+                if (refreshed) onDone()
+            }.onFailure { ex ->
+                onError(ex.friendlyMessage("No se pudo actualizar."))
+            }
         }
     }
 
@@ -125,6 +164,10 @@ class SubscriptionViewModel(
         } catch (_: DateTimeParseException) {
             null
         }
+    }
+
+    private fun Throwable.friendlyMessage(fallback: String): String {
+        return message?.takeIf { it.isNotBlank() } ?: fallback
     }
 }
 

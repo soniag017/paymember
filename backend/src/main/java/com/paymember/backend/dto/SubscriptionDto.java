@@ -19,10 +19,14 @@ public record SubscriptionDto(
     @NotNull Boolean reminderEnabled,
     @NotNull @Min(0) @Max(30) Integer reminderDaysBefore,
     String notes,
-    @PastOrPresent LocalDate startDate
+    @PastOrPresent LocalDate startDate,
+    String customIconUri
 ) {
     public static SubscriptionDto fromEntity(Subscription entity) {
         LocalDate startDate = entity.getStartDate() == null ? LocalDate.now() : entity.getStartDate();
+        String customIconUri = entity.getCustomIconData() == null || entity.getCustomIconData().length == 0
+            ? null
+            : "/api/subscriptions/" + entity.getId() + "/icon";
         return new SubscriptionDto(
             entity.getId(),
             entity.getServiceName(),
@@ -32,7 +36,8 @@ public record SubscriptionDto(
             entity.getReminderEnabled(),
             entity.getReminderDaysBefore(),
             entity.getNotes(),
-            startDate
+            startDate,
+            customIconUri
         );
     }
 }

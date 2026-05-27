@@ -1,6 +1,7 @@
 package com.paymember.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,15 +45,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -60,7 +66,9 @@ import com.paymember.data.model.BillingPeriod
 import com.paymember.data.model.SubscriptionEntity
 import com.paymember.data.reminder.ReminderSchedule
 import com.paymember.data.reminder.ReminderTiming
+import com.paymember.data.repository.SyncUiState
 import com.paymember.data.usage.AppUsageInsight
+import com.paymember.R
 import com.paymember.ui.components.Eyebrow
 import com.paymember.ui.components.MoneyText
 import com.paymember.ui.components.SectionCard
@@ -77,14 +85,18 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.format.TextStyle
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscriptionListScreen(
     subscriptions: List<SubscriptionEntity>,
     displayName: String,
     darkTheme: Boolean,
+    syncState: SyncUiState,
     onToggleDarkTheme: () -> Unit,
+    onRefresh: () -> Unit,
     onAddClick: () -> Unit,
     onManualClick: () -> Unit,
     onCalendarClick: () -> Unit,
@@ -98,7 +110,11 @@ fun SubscriptionListScreen(
     onDeleteClick: (SubscriptionEntity) -> Unit
 ) {
     var showReminderDialog by remember { mutableStateOf(false) }
+    var sortOption by rememberSaveable { mutableStateOf(SubscriptionSortOption.NextCharge) }
     val reminderPreviews = upcomingReminderPreviews(subscriptions)
+    val sortedSubscriptions = remember(subscriptions, sortOption) {
+        subscriptions.sortedFor(sortOption)
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -106,44 +122,57 @@ fun SubscriptionListScreen(
         contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 26.dp, top = 38.dp, end = 22.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(18.dp)
+            PullToRefreshBox(
+                isRefreshing = syncState.isRefreshing,
+                onRefresh = onRefresh,
+                modifier = Modifier.fillMaxSize()
             ) {
-                item {
-                    HomeHeader(
-                        displayName = displayName,
-                        darkTheme = darkTheme,
-                        onToggleDarkTheme = onToggleDarkTheme,
-                        onNotificationsClick = { showReminderDialog = true },
-                        onLogoutClick = onLogoutClick
-                    )
-                }
-                item { CreateSubscriptionPanel(onCatalogClick = onAddClick, onManualClick = onManualClick) }
-                item { MonthSectionHeader() }
-                item { MonthlyHeroCard(subscriptions = subscriptions) }
-                item {
-                    UsageMonitorCard(
-                        enabled = usageMonitoringEnabled,
-                        permissionGranted = usagePermissionGranted,
-                        insights = usageInsights,
-                        onEnabledChange = onUsageMonitoringToggle,
-                        onOpenSettings = onOpenUsageSettings
-                    )
-                }
-                item { UpcomingStrip(subscriptions = subscriptions, onCalendarClick = onCalendarClick) }
-                item { SubscriptionsHeader(count = subscriptions.size) }
-
-                if (subscriptions.isEmpty()) {
-                    item { EmptyState(onAddClick = onAddClick) }
-                } else {
-                    items(subscriptions, key = { it.id }) { item ->
-                        SubscriptionItem(
-                            item = item,
-                            onClick = { onEditClick(item.id) },
-                            onDeleteClick = { onDeleteClick(item) }
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(start = 26.dp, top = 38.dp, end = 22.dp, bottom = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                ) {
+                    item {
+                        HomeHeader(
+                            displayName = displayName,
+                            darkTheme = darkTheme,
+                            syncState = syncState,
+                            onToggleDarkTheme = onToggleDarkTheme,
+                            onNotificationsClick = { showReminderDialog = true },
+                            onLogoutClick = onLogoutClick
                         )
+                    }
+                    item { CreateSubscriptionPanel(onCatalogClick = onAddClick, onManualClick = onManualClick) }
+                    item { MonthSectionHeader() }
+                    item { MonthlyHeroCard(subscriptions = subscriptions) }
+                    item {
+                        UsageMonitorCard(
+                            enabled = usageMonitoringEnabled,
+                            permissionGranted = usagePermissionGranted,
+                            insights = usageInsights,
+                            onEnabledChange = onUsageMonitoringToggle,
+                            onOpenSettings = onOpenUsageSettings
+                        )
+                    }
+                    item { UpcomingStrip(subscriptions = subscriptions, onCalendarClick = onCalendarClick) }
+                    item {
+                        SubscriptionsHeader(
+                            count = subscriptions.size,
+                            sortOption = sortOption,
+                            onSortChange = { sortOption = it }
+                        )
+                    }
+
+                    if (subscriptions.isEmpty()) {
+                        item { EmptyState(onAddClick = onAddClick) }
+                    } else {
+                        items(sortedSubscriptions, key = { it.id }) { item ->
+                            SubscriptionItem(
+                                item = item,
+                                onClick = { onEditClick(item.id) },
+                                onDeleteClick = { onDeleteClick(item) }
+                            )
+                        }
                     }
                 }
             }
@@ -186,7 +215,7 @@ private fun UsageMonitorCard(
             when {
                 !enabled -> {
                     Text(
-                        "Activala para detectar apps que sigues pagando pero no abres en este dispositivo.",
+                        "Actívala para detectar apps que sigues pagando pero no abres en este dispositivo.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -219,7 +248,7 @@ private fun UsageMonitorCard(
                     }
                     if (insights.size > 3) {
                         Text(
-                            "+${insights.size - 3} suscripciones mas sin uso reciente",
+                            "+${insights.size - 3} suscripciones más sin uso reciente",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -262,10 +291,22 @@ private fun UsageInsightRow(insight: AppUsageInsight) {
 private fun HomeHeader(
     displayName: String,
     darkTheme: Boolean,
+    syncState: SyncUiState,
     onToggleDarkTheme: () -> Unit,
     onNotificationsClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
+    val logoBackground = if (darkTheme) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+    val logoBorder = if (darkTheme) {
+        BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.34f))
+    } else {
+        null
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -273,13 +314,17 @@ private fun HomeHeader(
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Surface(
-                modifier = Modifier.size(34.dp),
+                modifier = Modifier.size(40.dp),
                 shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                color = logoBackground,
+                border = logoBorder
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Text("p", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Black)
+                    Image(
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier.size(34.dp)
+                    )
                 }
             }
             Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
@@ -289,6 +334,7 @@ private fun HomeHeader(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
+                SyncStatusChip(syncState = syncState)
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -304,10 +350,43 @@ private fun HomeHeader(
             )
             HeaderIconButton(
                 icon = Icons.AutoMirrored.Filled.Logout,
-                contentDescription = "Cerrar sesion",
+                contentDescription = "Cerrar sesión",
                 onClick = onLogoutClick
             )
         }
+    }
+}
+
+@Composable
+private fun SyncStatusChip(syncState: SyncUiState) {
+    val label = when {
+        syncState.isRefreshing -> "Sincronizando"
+        syncState.errorMessage != null -> "Sin conexión"
+        syncState.lastSyncedAt != null -> "Sincronizado ${relativeSyncLabel(syncState.lastSyncedAt)}"
+        else -> "Pendiente de sincronizar"
+    }
+    val background = when {
+        syncState.errorMessage != null -> MaterialTheme.colorScheme.error.copy(alpha = 0.10f)
+        syncState.isRefreshing -> MaterialTheme.colorScheme.surfaceVariant
+        else -> MaterialTheme.colorScheme.primaryContainer
+    }
+    val foreground = when {
+        syncState.errorMessage != null -> MaterialTheme.colorScheme.error
+        syncState.isRefreshing -> MaterialTheme.colorScheme.onSurfaceVariant
+        else -> MaterialTheme.colorScheme.onPrimaryContainer
+    }
+
+    Surface(
+        color = background,
+        contentColor = foreground,
+        shape = CircleShape
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
+        )
     }
 }
 
@@ -318,11 +397,11 @@ private fun UpcomingRemindersDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Proximos avisos") },
+        title = { Text("Próximos avisos") },
         text = {
             if (reminders.isEmpty()) {
                 Text(
-                    "No hay avisos activos. Activa un recordatorio en una suscripcion para verlo aqui.",
+                    "No hay avisos activos. Activa un recordatorio en una suscripción para verlo aquí.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -350,7 +429,11 @@ private fun UpcomingReminderRow(reminder: UpcomingReminderPreview) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top
     ) {
-        ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 34.dp)
+        ServiceLogo(
+            Services.brandFor(inferBrandKey(item.serviceName)),
+            size = 34.dp,
+            customImageUri = item.customIconUri
+        )
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Text(item.cleanName(), style = MaterialTheme.typography.titleSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text(
@@ -359,7 +442,7 @@ private fun UpcomingReminderRow(reminder: UpcomingReminderPreview) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                "Cobro: ${shortDateLabel(reminder.schedule.chargeDate)} - ${reminderText(item.reminderEnabled, item.reminderDaysBefore)}",
+                "Cobro: ${shortDateLabel(reminder.schedule.chargeDate)} · ${reminderText(item.reminderEnabled, item.reminderDaysBefore)}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -622,18 +705,43 @@ private fun UpcomingCard(item: SubscriptionEntity) {
                 Text(" $month", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 22.dp)
+                ServiceLogo(
+                    Services.brandFor(inferBrandKey(item.serviceName)),
+                    size = 22.dp,
+                    customImageUri = item.customIconUri
+                )
                 Text(formatMoney(item.price), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1)
             }
         }
     }
 }
 
+private enum class SubscriptionSortOption(val label: String) {
+    NextCharge("Cobro"),
+    Name("Nombre"),
+    Price("Precio")
+}
+
 @Composable
-private fun SubscriptionsHeader(count: Int) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Tus suscripciones", style = MaterialTheme.typography.titleMedium)
-        Text("$count activas", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun SubscriptionsHeader(
+    count: Int,
+    sortOption: SubscriptionSortOption,
+    onSortChange: (SubscriptionSortOption) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Tus suscripciones", style = MaterialTheme.typography.titleMedium)
+            Text("$count activas", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SubscriptionSortOption.entries.forEach { option ->
+                FilterChip(
+                    selected = sortOption == option,
+                    onClick = { onSortChange(option) },
+                    label = { Text(option.label) }
+                )
+            }
+        }
     }
 }
 
@@ -658,7 +766,11 @@ private fun SubscriptionItem(
 ) {
     SectionCard(modifier = Modifier.clickable(onClick = onClick), padding = PaddingValues(horizontal = 16.dp, vertical = 14.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
-            ServiceLogo(Services.brandFor(inferBrandKey(item.serviceName)), size = 40.dp)
+            ServiceLogo(
+                Services.brandFor(inferBrandKey(item.serviceName)),
+                size = 40.dp,
+                customImageUri = item.customIconUri
+            )
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(item.cleanName(), style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(
@@ -668,7 +780,12 @@ private fun SubscriptionItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                AssistChip(onClick = {}, enabled = false, label = { Text(reminderText(item.reminderEnabled, item.reminderDaysBefore)) })
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                    dueSoonLabel(item)?.let { label ->
+                        DueSoonBadge(label = label)
+                    }
+                    AssistChip(onClick = {}, enabled = false, label = { Text(reminderText(item.reminderEnabled, item.reminderDaysBefore)) })
+                }
             }
             Column(horizontalAlignment = Alignment.End) {
                 Text(formatMoney(item.price), style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"))
@@ -681,12 +798,45 @@ private fun SubscriptionItem(
     }
 }
 
+@Composable
+private fun DueSoonBadge(label: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        shape = CircleShape
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
 private fun SubscriptionEntity.monthlyEquivalent(): Double {
     return if (period == BillingPeriod.MONTHLY) price else price / 12.0
 }
 
+private fun List<SubscriptionEntity>.sortedFor(sortOption: SubscriptionSortOption): List<SubscriptionEntity> {
+    return when (sortOption) {
+        SubscriptionSortOption.NextCharge -> sortedWith(compareBy<SubscriptionEntity> { nextChargeDate(it) }.thenBy { it.serviceName })
+        SubscriptionSortOption.Name -> sortedBy { it.cleanName().lowercase(Locale.getDefault()) }
+        SubscriptionSortOption.Price -> sortedByDescending { it.monthlyEquivalent() }
+    }
+}
+
 private fun nextChargeDate(item: SubscriptionEntity): LocalDate {
     return BillingHistoryCalculator.nextChargeDate(item)
+}
+
+private fun dueSoonLabel(item: SubscriptionEntity): String? {
+    val days = ChronoUnit.DAYS.between(LocalDate.now(), nextChargeDate(item))
+    return when (days) {
+        0L -> "Hoy"
+        1L -> "Mañana"
+        in 2L..3L -> "En $days días"
+        else -> null
+    }
 }
 
 private fun SubscriptionEntity.cleanName(): String = serviceName.substringBefore(" - ").ifBlank { serviceName }
@@ -736,7 +886,7 @@ private fun countdownLabel(duration: Duration): String {
 
     val days = totalHours / 24
     val hours = totalHours % 24
-    val dayText = if (days == 1L) "1 dia" else "$days dias"
+    val dayText = if (days == 1L) "1 día" else "$days días"
     return if (hours == 0L) {
         "en $dayText"
     } else {
@@ -764,12 +914,21 @@ private fun monthLabel(): String {
     return "$month ${today.year}"
 }
 
+private fun relativeSyncLabel(lastSyncedAt: LocalDateTime): String {
+    val minutes = Duration.between(lastSyncedAt, LocalDateTime.now()).toMinutes().coerceAtLeast(0)
+    return when {
+        minutes < 1 -> "ahora"
+        minutes < 60 -> "hace $minutes min"
+        else -> "hace ${minutes / 60} h"
+    }
+}
+
 private fun AppUsageInsight.usageLabel(): String {
     val days = daysSinceLastUse
     return if (days == null) {
         "Sin uso detectado en 6 meses"
     } else {
-        "Sin abrir desde hace $days dias"
+        "Sin abrir desde hace $days días"
     }
 }
 

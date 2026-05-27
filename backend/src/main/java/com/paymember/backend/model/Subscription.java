@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -49,6 +50,16 @@ public class Subscription {
     @Column
     private LocalDate startDate;
 
+    @Column
+    private String customIconUri;
+
+    @Lob
+    @Column
+    private byte[] customIconData;
+
+    @Column(length = 100)
+    private String customIconContentType;
+
     @PrePersist
     void applyDefaults() {
         if (startDate == null) {
@@ -76,4 +87,10 @@ public class Subscription {
     public void setNotes(String notes) { this.notes = notes; }
     public LocalDate getStartDate() { return startDate; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
+    public String getCustomIconUri() { return customIconUri; }
+    public void setCustomIconUri(String customIconUri) { this.customIconUri = customIconUri; }
+    public byte[] getCustomIconData() { return customIconData; }
+    public void setCustomIconData(byte[] customIconData) { this.customIconData = customIconData; }
+    public String getCustomIconContentType() { return customIconContentType; }
+    public void setCustomIconContentType(String customIconContentType) { this.customIconContentType = customIconContentType; }
 }

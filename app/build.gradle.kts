@@ -20,6 +20,9 @@ val googleWebClientId = providers.gradleProperty("GOOGLE_WEB_CLIENT_ID")
             "replace-with-your-web-client-id.apps.googleusercontent.com"
         )
     )
+val apiBaseUrl = providers.gradleProperty("API_BASE_URL")
+    .orElse(providers.environmentVariable("API_BASE_URL"))
+    .getOrElse(localProperties.getProperty("API_BASE_URL", "http://10.0.2.2:8080/"))
 
 android {
     namespace = "com.paymember"
@@ -34,6 +37,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resValue("string", "google_web_client_id", googleWebClientId)
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     buildTypes {
@@ -57,6 +61,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
