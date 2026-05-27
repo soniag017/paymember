@@ -96,8 +96,14 @@ fun LoginScreen(
     }
 
     val googleLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            onGoogleError("Inicio de sesion con Google cancelado.")
+        if (result.data == null) {
+            onGoogleError(
+                if (result.resultCode == Activity.RESULT_OK) {
+                    "Google no devolvio datos de inicio de sesion."
+                } else {
+                    "Inicio de sesion con Google cancelado."
+                }
+            )
             return@rememberLauncherForActivityResult
         }
 
