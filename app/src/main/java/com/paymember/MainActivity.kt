@@ -61,7 +61,7 @@ import com.paymember.viewmodel.SubscriptionViewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-private const val DEV_SKIP_LOGIN = true
+private const val DEV_SKIP_LOGIN = false
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
